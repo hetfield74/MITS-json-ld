@@ -41,8 +41,6 @@ function mits_ml(mixed $value): mixed
 }
 
 /**
- * Helper: Knoten zum @graph hinzufügen
- *
  * @param array $node
  *
  * @return void
@@ -57,8 +55,6 @@ function mits_graph_add(array $node): void
 }
 
 /**
- * Helper: kompletten @graph ausgeben
- *
  * @return void
  */
 function mits_graph_output(): void
@@ -117,65 +113,91 @@ function mits_jsonld_clean(array $data): array
 }
 
 /**
- * Texte für JSON-LD säubern.
- *
  * @param mixed $text
  *
  * @return string|null
  */
 function mits_jsonld_sanitize(mixed $text): ?string
 {
+    static $charset = null;
+    static $replaceQuotes = null;
+
+    if ($charset === null) {
+        $charset = defined('CHARSET') ? CHARSET : 'UTF-8';
+    }
+
     if ($text === null || $text === '') {
         return null;
     }
 
-    // Arrays in String wandeln
     if (is_array($text)) {
         $text = implode(', ', $text);
     }
 
-    // Zeichensatz bestimmen
-    $charset = defined('CHARSET') ? CHARSET : 'UTF-8';
-
-    // HTML entfernen und Entities dekodieren
     $text = strip_tags($text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, $charset);
 
-    // No-Break-Space → normaler Space
     $text = str_replace("\u{00A0}", ' ', $text);
 
-    // Soft-Hyphen entfernen
     $text = str_replace("\u{00AD}", '', $text);
 
-    // typografische Quotes ersetzen
-    $replaceQuotes = [
-      "\u{201C}" => '"',
-      "\u{201D}" => '"',
-      "\u{201E}" => '"',
-      "\u{201F}" => '"',
-      "\u{00AB}" => '"',
-      "\u{00BB}" => '"',
-      "\u{2018}" => "'",
-      "\u{2019}" => "'",
-    ];
+    if ($replaceQuotes === null) {
+        $replaceQuotes = [
+          "\u{201C}" => '"',
+          "\u{201D}" => '"',
+          "\u{201E}" => '"',
+          "\u{201F}" => '"',
+          "\u{00AB}" => '"',
+          "\u{00BB}" => '"',
+          "\u{2018}" => "'",
+          "\u{2019}" => "'",
+        ];
+    }
+
     $text = strtr($text, $replaceQuotes);
 
-    // Unicode-Punctuation (U+2000–U+206F) entfernen
     $text = preg_replace('/[\x{2000}-\x{206F}]/u', ' ', $text);
 
-    // Steuerzeichen entfernen
     $text = preg_replace('/[\x00-\x1F\x7F]/u', '', $text);
 
-    // Unicode normalisieren (falls möglich)
     if (class_exists('Normalizer')) {
         $text = Normalizer::normalize($text, Normalizer::FORM_C);
     }
 
-    // Mehrfache Whitespaces reduzieren
     $text = preg_replace('/\s+/u', ' ', $text);
 
     return trim($text);
 }
+
+
+/**
+ * @param string $file
+ * @param string $params
+ * @param string $ssl
+ *
+ * @return string
+ */
+function mits_link(string $file, string $params = '', string $ssl = 'NONSSL'): string
+{
+    return xtc_href_link($file, $params, $ssl, false);
+}
+
+/**
+ * @param int|string $productId
+ * @param bool $noSsl
+ *
+ * @return string
+ */
+function mits_product_url(int|string $productId, bool $noSsl = true): string
+{
+    return xtc_href_link(
+      FILENAME_PRODUCT_INFO,
+      xtc_product_link($productId),
+      $noSsl ? 'NONSSL' : 'SSL',
+      false
+    );
+}
+
 
 /**
  * @return string|null
@@ -201,8 +223,6 @@ function mits_get_logo(): ?string
 }
 
 /**
- * Zusätzliche Eigenschaften (Tags) für ein Produkt bauen.
- *
  * @param int $productId
  *
  * @return array
@@ -434,7 +454,7 @@ function mits_build_offers_for_product(object $product, array $productDataArray)
         if (!empty($attributesByOptionId)) {
             $optionGroups = array_values($attributesByOptionId);
 
-            $buildCombinationOffers = function (
+            $buildCombinationOffers = static function (
               array $optionGroups,
               int $currentOptionIndex,
               array $currentCombination,
@@ -981,7 +1001,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
     }
 
     if (defined('MODULE_MITS_JSON_LD_SOCIAL_MEDIA') && !empty(MODULE_MITS_JSON_LD_SOCIAL_MEDIA)) {
-        $org['sameAs'] = array_map('trim', explode(',', MODULE_MITS_JSON_LD_SOCIAL_MEDIA));
+        $org['sameAs'] = preg_split('/\s*,\s*/', MODULE_MITS_JSON_LD_SOCIAL_MEDIA);
     }
 
     $org = mits_jsonld_clean($org);
@@ -1038,8 +1058,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_BREADCRUMB') && isset($breadcrumb)) {
           '@type'    => 'ListItem',
           'position' => $i + 1,
           'name'     => mits_jsonld_sanitize($bc['title']),
-          'item'     => $bc['link']
-            ?: xtc_href_link(basename($PHP_SELF), xtc_get_all_get_params([], true), $request_type),
+          'item'     => $bc['link'] ?: mits_link(basename($PHP_SELF), xtc_get_all_get_params([], true)),
         ];
     }
 
@@ -1098,12 +1117,7 @@ if (
         }
     }
 
-    $productURL = xtc_href_link(
-      FILENAME_PRODUCT_INFO,
-      xtc_product_link($product->data['products_id']),
-      'NONSSL',
-      false
-    );
+    $productURL = mits_product_url($product->data['products_id']);
 
     $schema = [
       '@type'            => 'Product',

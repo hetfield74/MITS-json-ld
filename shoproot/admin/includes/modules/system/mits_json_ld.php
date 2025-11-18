@@ -34,7 +34,7 @@ class mits_json_ld
     {
         $this->code = 'mits_json_ld';
         $this->name = 'MODULE_' . strtoupper($this->code);
-        $this->version = '1.0.5';
+        $this->version = '1.0.6';
         $this->default_colums = 'configuration_key, configuration_value, configuration_group_id, sort_order, set_function';
 
         $this->sort_order = defined($this->name . '_SORT_ORDER') ? constant($this->name . '_SORT_ORDER') : 0;
