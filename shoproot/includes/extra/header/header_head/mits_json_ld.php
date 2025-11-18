@@ -21,29 +21,36 @@ require_once DIR_FS_INC . 'parse_multi_language_value.inc.php';
 $mitsJsonLdGraph = [];
 
 /**
- * @param $const
+ * @param string $const
+ *
  * @return bool
  */
-function mits_flag($const): bool
+function mits_flag(string $const): bool
 {
     return defined($const) && constant($const) === 'true';
 }
 
 /**
- * @param $value
+ * @param mixed $value
+ *
  * @return mixed
  */
-function mits_ml($value): mixed
+function mits_ml(mixed $value): mixed
 {
     return parse_multi_language_value($value, $_SESSION['language_code']);
 }
 
 /**
  * Helper: Knoten zum @graph hinzufügen
+ *
+ * @param array $node
+ *
+ * @return void
  */
-function mits_graph_add(array $node)
+function mits_graph_add(array $node): void
 {
     global $mitsJsonLdGraph;
+
     if (!empty($node)) {
         $mitsJsonLdGraph[] = $node;
     }
@@ -51,8 +58,10 @@ function mits_graph_add(array $node)
 
 /**
  * Helper: kompletten @graph ausgeben
+ *
+ * @return void
  */
-function mits_graph_output()
+function mits_graph_output(): void
 {
     global $mitsJsonLdGraph;
 
@@ -72,17 +81,19 @@ function mits_graph_output()
 
 /**
  * @param array $data
+ *
  * @return void
  */
 function mits_output_json(array $data): void
 {
-    echo '<script type="application/ld+json">' .
-      json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .
-      '</script>';
+    echo '<script type="application/ld+json">'
+      . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+      . '</script>';
 }
 
 /**
  * @param array $data
+ *
  * @return array
  */
 function mits_jsonld_clean(array $data): array
@@ -101,7 +112,69 @@ function mits_jsonld_clean(array $data): array
             }
         }
     }
+
     return $data;
+}
+
+/**
+ * Texte für JSON-LD säubern.
+ *
+ * @param mixed $text
+ *
+ * @return string|null
+ */
+function mits_jsonld_sanitize(mixed $text): ?string
+{
+    if ($text === null || $text === '') {
+        return null;
+    }
+
+    // Arrays in String wandeln
+    if (is_array($text)) {
+        $text = implode(', ', $text);
+    }
+
+    // Zeichensatz bestimmen
+    $charset = defined('CHARSET') ? CHARSET : 'UTF-8';
+
+    // HTML entfernen und Entities dekodieren
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, $charset);
+
+    // No-Break-Space → normaler Space
+    $text = str_replace("\u{00A0}", ' ', $text);
+
+    // Soft-Hyphen entfernen
+    $text = str_replace("\u{00AD}", '', $text);
+
+    // typografische Quotes ersetzen
+    $replaceQuotes = [
+      "\u{201C}" => '"',
+      "\u{201D}" => '"',
+      "\u{201E}" => '"',
+      "\u{201F}" => '"',
+      "\u{00AB}" => '"',
+      "\u{00BB}" => '"',
+      "\u{2018}" => "'",
+      "\u{2019}" => "'",
+    ];
+    $text = strtr($text, $replaceQuotes);
+
+    // Unicode-Punctuation (U+2000–U+206F) entfernen
+    $text = preg_replace('/[\x{2000}-\x{206F}]/u', ' ', $text);
+
+    // Steuerzeichen entfernen
+    $text = preg_replace('/[\x00-\x1F\x7F]/u', '', $text);
+
+    // Unicode normalisieren (falls möglich)
+    if (class_exists('Normalizer')) {
+        $text = Normalizer::normalize($text, Normalizer::FORM_C);
+    }
+
+    // Mehrfache Whitespaces reduzieren
+    $text = preg_replace('/\s+/u', ' ', $text);
+
+    return trim($text);
 }
 
 /**
@@ -128,16 +201,19 @@ function mits_get_logo(): ?string
 }
 
 /**
- * @param $productId
+ * Zusätzliche Eigenschaften (Tags) für ein Produkt bauen.
+ *
+ * @param int $productId
+ *
  * @return array
  */
-function mits_build_additional_properties($productId): array
+function mits_build_additional_properties(int $productId): array
 {
     if (
-      !defined('TABLE_PRODUCTS_TAGS') ||
-      !defined('TABLE_PRODUCTS_TAGS_OPTIONS') ||
-      !defined('TABLE_PRODUCTS_TAGS_VALUES') ||
-      !defined('ADD_TAGS_SELECT')
+      !defined('TABLE_PRODUCTS_TAGS')
+      || !defined('TABLE_PRODUCTS_TAGS_OPTIONS')
+      || !defined('TABLE_PRODUCTS_TAGS_VALUES')
+      || !defined('ADD_TAGS_SELECT')
     ) {
         return [];
     }
@@ -173,15 +249,17 @@ function mits_build_additional_properties($productId): array
                ptv.values_name
     ";
 
-    $tags_query = xtDBquery($sql);
-    if (xtc_db_num_rows($tags_query, true) <= 0) {
+    $tagsQuery = xtDBquery($sql);
+
+    if (xtc_db_num_rows($tagsQuery, true) <= 0) {
         return [];
     }
 
-    $tags_content = [];
-    while ($row = xtc_db_fetch_array($tags_query, true)) {
-        if (!isset($tags_content[$row['options_id']])) {
-            $tags_content[$row['options_id']] = [
+    $tagsContent = [];
+
+    while ($row = xtc_db_fetch_array($tagsQuery, true)) {
+        if (!isset($tagsContent[$row['options_id']])) {
+            $tagsContent[$row['options_id']] = [
               'OPTIONS_NAME'        => $row['options_name'],
               'OPTIONS_ID'          => $row['options_id'],
               'OPTIONS_SORT_ORDER'  => $row['options_sort_order'],
@@ -190,7 +268,7 @@ function mits_build_additional_properties($productId): array
             ];
         }
 
-        $tags_content[$row['options_id']]['DATA'][] = [
+        $tagsContent[$row['options_id']]['DATA'][] = [
           'VALUES_NAME'        => $row['values_name'],
           'VALUES_ID'          => $row['values_id'],
           'VALUES_SORT_ORDER'  => $row['values_sort_order'],
@@ -199,16 +277,18 @@ function mits_build_additional_properties($productId): array
     }
 
     $additional = [];
-    foreach ($tags_content as $tag_option) {
+
+    foreach ($tagsContent as $tagOption) {
         $value = null;
 
-        if (count($tag_option['DATA']) > 1) {
+        if (count($tagOption['DATA']) > 1) {
             $value = [];
-            foreach ($tag_option['DATA'] as $tag_value) {
-                $value[] = $tag_value['VALUES_NAME'];
+
+            foreach ($tagOption['DATA'] as $tagValue) {
+                $value[] = mits_jsonld_sanitize($tagValue['VALUES_NAME']);
             }
-        } elseif (!empty($tag_option['DATA'][0]['VALUES_NAME'])) {
-            $value = $tag_option['DATA'][0]['VALUES_NAME'];
+        } elseif (!empty($tagOption['DATA'][0]['VALUES_NAME'])) {
+            $value = mits_jsonld_sanitize($tagOption['DATA'][0]['VALUES_NAME']);
         }
 
         if ($value === null) {
@@ -217,16 +297,12 @@ function mits_build_additional_properties($productId): array
 
         $entry = [
           '@type' => 'PropertyValue',
-          'name'  => $tag_option['OPTIONS_NAME'],
+          'name'  => mits_jsonld_sanitize($tagOption['OPTIONS_NAME']),
           'value' => $value,
         ];
 
-        if (!empty($tag_option['OPTIONS_DESCRIPTION'])) {
-            $entry['description'] = preg_replace(
-              "/\n+/",
-              "\n",
-              strip_tags($tag_option['OPTIONS_DESCRIPTION'])
-            );
+        if (!empty($tagOption['OPTIONS_DESCRIPTION'])) {
+            $entry['description'] = mits_jsonld_sanitize($tagOption['OPTIONS_DESCRIPTION']);
         }
 
         $additional[] = $entry;
@@ -236,14 +312,14 @@ function mits_build_additional_properties($productId): array
 }
 
 /**
- * @param $product
+ * @param object $product
+ *
  * @return bool
  */
-function mits_jsonld_attributes_enabled_for_product($product)
+function mits_jsonld_attributes_enabled_for_product(object $product): bool
 {
-    $globalEnabled =
-      defined('MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES') &&
-      MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES === 'true';
+    $globalEnabled = defined('MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES')
+      && MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES === 'true';
 
     if (!isset($product->data['mits_jsonld_attributes_enabled'])) {
         return $globalEnabled;
@@ -253,21 +329,23 @@ function mits_jsonld_attributes_enabled_for_product($product)
 
     if (is_string($val)) {
         $val = strtolower(trim($val));
+
         if ($val === 'true' || $val === '1') {
             return true;
         }
+
         return false;
     }
 
     return (bool)$val;
 }
 
-
 /**
- * @param $product
+ * @param object $product
+ *
  * @return bool
  */
-function mits_jsonld_tags_enabled_for_product($product): bool
+function mits_jsonld_tags_enabled_for_product(object $product): bool
 {
     $globalEnabled = defined('MODULE_MITS_JSON_LD_ENABLE_TAGS')
       && MODULE_MITS_JSON_LD_ENABLE_TAGS === 'true';
@@ -280,9 +358,11 @@ function mits_jsonld_tags_enabled_for_product($product): bool
 
     if (is_string($val)) {
         $val = strtolower(trim($val));
+
         if ($val === 'true' || $val === '1') {
             return true;
         }
+
         return false;
     }
 
@@ -290,10 +370,11 @@ function mits_jsonld_tags_enabled_for_product($product): bool
 }
 
 /**
- * @param float $price
+ * @param float|int|string $price
+ *
  * @return string
  */
-function mits_jsonld_price_format($price): string
+function mits_jsonld_price_format(float|int|string $price): string
 {
     $price = (string)$price;
 
@@ -301,19 +382,21 @@ function mits_jsonld_price_format($price): string
         return bcadd($price, '0', 2);
     }
 
-    return number_format((double)$price, 2, '.', '');
+    return number_format((float)$price, 2, '.', '');
 }
 
 /**
- * @param $product
- * @param array $productDataArray
+ * @param object $product
+ * @param array  $productDataArray
+ *
  * @return array|mixed
  */
-function mits_build_offers_for_product($product, array $productDataArray): mixed
+function mits_build_offers_for_product(object $product, array $productDataArray): mixed
 {
     global $xtPrice;
 
     $maxOffers = 100;
+
     if (defined('MODULE_MITS_JSON_LD_MAX_OFFERS') && (int)MODULE_MITS_JSON_LD_MAX_OFFERS > 0) {
         $maxOffers = (int)MODULE_MITS_JSON_LD_MAX_OFFERS;
     }
@@ -322,7 +405,7 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
       && method_exists($product, 'getAttributesCount')
       && $product->getAttributesCount() > 0;
 
-    $offers = [];
+    $offers     = [];
     $offerIndex = 0;
 
     if ($useAttributes) {
@@ -344,6 +427,7 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
             if (!isset($attributesByOptionId[$row['options_id']])) {
                 $attributesByOptionId[$row['options_id']] = [];
             }
+
             $attributesByOptionId[$row['options_id']][] = $row;
         }
 
@@ -357,9 +441,9 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
               array &$offers,
               int &$offerIndex,
               int $maxOffers,
-              $product,
+              object $product,
               array $productDataArray
-            ) use (&$buildCombinationOffers, $xtPrice) {
+            ) use (&$buildCombinationOffers, $xtPrice): void {
                 if ($offerIndex >= $maxOffers) {
                     return;
                 }
@@ -372,6 +456,7 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
                       $xtPrice
                     );
                     $offerIndex++;
+
                     return;
                 }
 
@@ -382,7 +467,7 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
                         break;
                     }
 
-                    $nextCombination = $currentCombination;
+                    $nextCombination   = $currentCombination;
                     $nextCombination[] = $attributeRow;
 
                     $buildCombinationOffers(
@@ -420,6 +505,7 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
     }
 
     $allPrices = [];
+
     foreach ($offers as $offer) {
         if (isset($offer['price'])) {
             $allPrices[] = $offer['price'];
@@ -443,28 +529,29 @@ function mits_build_offers_for_product($product, array $productDataArray): mixed
 }
 
 /**
- * @param array $attributeCombination
- * @param $product
- * @param array $productDataArray
- * @param bool $sumBaseUnitQuantities
- * @param $xtPrice
+ * @param array  $attributeCombination
+ * @param object $product
+ * @param array  $productDataArray
+ * @param object $xtPrice
+ *
  * @return array
  */
 function mits_build_single_variant_offer_from_combination(
   array $attributeCombination,
-  $product,
+  object $product,
   array $productDataArray,
-  $xtPrice
+  object $xtPrice
 ): array {
-    $variantStockQuantity = $productDataArray['PRODUCTS_QUANTITY'] ?? $product->data['products_quantity'];
-    $variantBaseUnitQuantity = (double)($product->data['products_vpe_value'] ?? 0);
-    $variantBasePrice = (float)($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_PLAIN'] ?? $product->data['products_price']);
+    $variantStockQuantity   = $productDataArray['PRODUCTS_QUANTITY'] ?? $product->data['products_quantity'];
+    $variantBaseUnitQuantity = (float)($product->data['products_vpe_value'] ?? 0);
+    $variantBasePrice        = (float)($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_PLAIN']
+      ?? $product->data['products_price']);
 
     $usedOptionValueIds = [];
-    $optionValueNames = [];
-    $optionModelParts = [];
+    $optionValueNames   = [];
+    $optionModelParts   = [];
 
-    $variantEan = $productDataArray['PRODUCTS_EAN'] ?? ($product->data['products_ean'] ?? '');
+    $variantEan     = $productDataArray['PRODUCTS_EAN'] ?? ($product->data['products_ean'] ?? '');
     $hasAttributeEan = false;
 
     foreach ($attributeCombination as $attributeRow) {
@@ -480,6 +567,7 @@ function mits_build_single_variant_offer_from_combination(
 
         if (isset($attributeRow['attributes_stock']) && $attributeRow['attributes_stock'] !== '') {
             $qty = (float)$attributeRow['attributes_stock'];
+
             if ($variantStockQuantity === null) {
                 $variantStockQuantity = $qty;
             } else {
@@ -498,9 +586,11 @@ function mits_build_single_variant_offer_from_combination(
                 case '-':
                     $variantBasePrice -= $attrPrice;
                     break;
+
                 case '=':
                     $variantBasePrice = $attrPrice;
                     break;
+
                 default: // '+'
                     $variantBasePrice += $attrPrice;
                     break;
@@ -508,19 +598,22 @@ function mits_build_single_variant_offer_from_combination(
         }
 
         if (!empty($attributeRow['attributes_ean'])) {
-            $variantEan = $attributeRow['attributes_ean'];
+            $variantEan     = $attributeRow['attributes_ean'];
             $hasAttributeEan = true;
         }
 
         if (!empty($attributeRow['attributes_vpe_value'])) {
             $attrVpe = (float)$attributeRow['attributes_vpe_value'];
+
             switch ($attributeRow['weight_prefix']) {
                 case '-':
                     $variantBaseUnitQuantity -= $attrVpe;
                     break;
+
                 case '=':
                     $variantBaseUnitQuantity = $attrVpe;
                     break;
+
                 default:
                     $variantBaseUnitQuantity += $attrVpe;
                     break;
@@ -529,19 +622,21 @@ function mits_build_single_variant_offer_from_combination(
     }
 
     if (
-      isset($product->data['products_discount']) &&
-      (float)$product->data['products_discount'] != 0 &&
-      !empty($_SESSION['customers_status']['customers_status_discount_attributes'])
+      isset($product->data['products_discount'])
+      && (float)$product->data['products_discount'] !== 0.0
+      && !empty($_SESSION['customers_status']['customers_status_discount_attributes'])
     ) {
-        $variantBasePrice = $variantBasePrice * (100 - (float)$product->data['products_discount']) / 100;
+        $variantBasePrice *= (100 - (float)$product->data['products_discount']) / 100;
     }
 
     if ($variantStockQuantity === null) {
         $variantStockQuantity = $product->data['products_quantity'];
     }
+
     if (count($attributeCombination) === 1 && !$hasAttributeEan) {
         $variantStockQuantity = $product->data['products_quantity'];
     }
+
     if ($variantStockQuantity < 0) {
         $variantStockQuantity = 0;
     }
@@ -551,22 +646,27 @@ function mits_build_single_variant_offer_from_combination(
       : 'https://schema.org/InStock';
 
     $productIdForLink = $product->data['products_id'];
+
     if (!empty($usedOptionValueIds)) {
         $attributeSignatureParts = [];
+
         foreach ($usedOptionValueIds as $optionId => $valueId) {
             $attributeSignatureParts[] = '{' . $optionId . '}' . $valueId;
         }
+
         if (!empty($attributeSignatureParts)) {
             $productIdForLink .= implode('', $attributeSignatureParts);
         }
     }
 
     $offerName = $productDataArray['PRODUCTS_NAME'] ?? $product->data['products_name'];
+
     if (!empty($optionValueNames)) {
         $offerName .= ' ' . implode(' ', $optionValueNames);
     }
 
     $offerSku = $productDataArray['PRODUCTS_MODEL'] ?? $product->data['products_model'];
+
     if (!empty($optionModelParts)) {
         $offerSku .= '-' . implode('-', $optionModelParts);
     }
@@ -580,25 +680,24 @@ function mits_build_single_variant_offer_from_combination(
     );
 
     $currencyCode = $_SESSION['currency'] ?? ($xtPrice->actualCurr ?? 'EUR');
-    $finalPrice = mits_jsonld_price_format($variantBasePrice);
+    $finalPrice   = mits_jsonld_price_format($variantBasePrice);
 
-    $priceSpecification = [
-      [
-        '@type'                 => 'UnitPriceSpecification',
-        'price'                 => $finalPrice,
-        'priceCurrency'         => $currencyCode,
-        'valueAddedTaxIncluded' => true,
-        'priceType'             => 'https://schema.org/RegularPrice',
-      ]
-    ];
+    $priceSpecification = [[
+                             '@type'                 => 'UnitPriceSpecification',
+                             'price'                 => $finalPrice,
+                             'priceCurrency'         => $currencyCode,
+                             'valueAddedTaxIncluded' => true,
+                             'priceType'             => 'https://schema.org/RegularPrice',
+                           ]];
 
     $eligibleQuantity = null;
 
-    if (!empty($product->data['products_vpe_status'])
+    if (
+      !empty($product->data['products_vpe_status'])
       && $variantBaseUnitQuantity > 0
       && $finalPrice > 0
     ) {
-        $baseUnitName = xtc_get_vpe_name($product->data['products_vpe']);
+        $baseUnitName = mits_jsonld_sanitize(xtc_get_vpe_name($product->data['products_vpe']));
 
         $priceSpecification[] = [
           '@type'                 => 'UnitPriceSpecification',
@@ -610,7 +709,10 @@ function mits_build_single_variant_offer_from_combination(
             'value'    => 1,
             'unitText' => $baseUnitName,
           ],
-          'description'           => $xtPrice->xtcFormat($finalPrice * (1 / $variantBaseUnitQuantity), true) . TXT_PER . $baseUnitName,
+          'description'           => $xtPrice->xtcFormat(
+              $finalPrice * (1 / $variantBaseUnitQuantity),
+              true
+            ) . TXT_PER . $baseUnitName,
         ];
 
         $eligibleQuantity = [
@@ -625,7 +727,7 @@ function mits_build_single_variant_offer_from_combination(
     $offer = [
       '@type'              => 'Offer',
       '@id'                => $offerUrl . '#offer-' . strtolower(preg_replace('/[^a-z0-9]+/', '-', $offerSku)),
-      'name'               => $offerName,
+      'name'               => mits_jsonld_sanitize($offerName),
       'sku'                => $offerSku,
       'url'                => $offerUrl,
       'priceCurrency'      => $currencyCode,
@@ -634,7 +736,7 @@ function mits_build_single_variant_offer_from_combination(
       'availability'       => $availability,
       'seller'             => [
         '@type' => 'Organization',
-        'name'  => $sellerName,
+        'name'  => mits_jsonld_sanitize($sellerName),
       ],
       'priceSpecification' => $priceSpecification,
     ];
@@ -642,6 +744,7 @@ function mits_build_single_variant_offer_from_combination(
     if (!empty($variantEan)) {
         $offer['gtin'] = $variantEan;
     }
+
     if ($eligibleQuantity !== null) {
         $offer['eligibleQuantity'] = $eligibleQuantity;
     }
@@ -650,23 +753,31 @@ function mits_build_single_variant_offer_from_combination(
 }
 
 /**
- * @param $product
- * @param array $productDataArray
- * @param $xtPrice
+ * @param object $product
+ * @param array  $productDataArray
+ * @param object $xtPrice
+ *
  * @return array
  */
-function mits_build_single_base_offer_without_attributes($product, array $productDataArray, $xtPrice): array
-{
-    $currencyCode = $_SESSION['currency'] ?? ($xtPrice->actualCurr ?? 'EUR');
-    $basePricePlain = ($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_PLAIN'] ?? $product->data['products_price']);
-    $basePrice = mits_jsonld_price_format($basePricePlain);
+function mits_build_single_base_offer_without_attributes(
+  object $product,
+  array $productDataArray,
+  object $xtPrice
+): array {
+    $currencyCode  = $_SESSION['currency'] ?? ($xtPrice->actualCurr ?? 'EUR');
+    $basePricePlain = (float)($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_PLAIN']
+      ?? $product->data['products_price']);
+    $basePrice      = mits_jsonld_price_format($basePricePlain);
 
     $priceSpecification = [];
 
-    if (!empty($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'])
+    if (
+      !empty($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'])
       && stripos($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'], 'special') !== false
     ) {
-        $oldPrice = mits_jsonld_price_format($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_OLD_PRICE_PLAIN']);
+        $oldPrice           = mits_jsonld_price_format(
+          $productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_OLD_PRICE_PLAIN']
+        );
         $priceSpecification[] = [
           '@type'                 => 'UnitPriceSpecification',
           'price'                 => $oldPrice,
@@ -682,12 +793,14 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
           'valueAddedTaxIncluded' => true,
           'priceType'             => 'https://schema.org/RegularPrice',
         ];
+
         if (!empty($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_EXPIRES_DATE'])) {
             $currentSpec['validThrough'] = date(
               'Y-m-d',
               strtotime($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_EXPIRES_DATE'])
             );
         }
+
         $priceSpecification[] = $currentSpec;
     } else {
         $priceSpecification[] = [
@@ -700,12 +813,15 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
     }
 
     $eligibleQuantity = null;
-    if (!empty($product->data['products_vpe_status'])
+
+    if (
+      !empty($product->data['products_vpe_status'])
       && !empty($product->data['products_vpe_value'])
       && $product->data['products_vpe_value'] != 0.0
       && $basePricePlain > 0
     ) {
-        $baseUnitName = xtc_get_vpe_name($product->data['products_vpe']);
+        $baseUnitName = mits_jsonld_sanitize(xtc_get_vpe_name($product->data['products_vpe']));
+
         $priceSpecification[] = [
           '@type'                 => 'UnitPriceSpecification',
           'price'                 => $basePrice,
@@ -721,6 +837,7 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
               true
             ) . TXT_PER . $baseUnitName,
         ];
+
         $eligibleQuantity = [
           '@type'    => 'QuantitativeValue',
           'value'    => $product->data['products_vpe_value'],
@@ -752,7 +869,7 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
       'availability'       => $availability,
       'seller'             => [
         '@type' => 'Organization',
-        'name'  => $sellerName,
+        'name'  => mits_jsonld_sanitize($sellerName),
       ],
       'priceSpecification' => $priceSpecification,
     ];
@@ -760,9 +877,11 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
     if (!empty($productDataArray['PRODUCTS_MANUFACTURERS_MODEL'])) {
         $offer['mpn'] = $productDataArray['PRODUCTS_MANUFACTURERS_MODEL'];
     }
+
     if (!empty($productDataArray['PRODUCTS_EAN'])) {
         $offer['gtin'] = $productDataArray['PRODUCTS_EAN'];
     }
+
     if ($eligibleQuantity !== null) {
         $offer['eligibleQuantity'] = $eligibleQuantity;
     }
@@ -770,16 +889,17 @@ function mits_build_single_base_offer_without_attributes($product, array $produc
     return $offer;
 }
 
-
 $logo = mits_get_logo();
 
-/* WebSite */
+/**
+ * WebSite
+ */
 if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
     $webSite = [
       '@type'         => 'WebSite',
-      'name'          => mits_ml(MODULE_MITS_JSON_LD_NAME),
-      'alternateName' => mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME),
-      'description'   => mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION),
+      'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
+      'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
+      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
       'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
     ];
 
@@ -790,7 +910,12 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
     if (mits_flag('MODULE_MITS_JSON_LD_SHOW_SEARCHFIELD')) {
         $webSite['potentialAction'] = [
           '@type'       => 'SearchAction',
-          'target'      => xtc_href_link(FILENAME_ADVANCED_SEARCH_RESULT, '', $request_type, false) . '?keywords={search_term_string}',
+          'target'      => xtc_href_link(
+              FILENAME_ADVANCED_SEARCH_RESULT,
+              '',
+              $request_type,
+              false
+            ) . '?keywords={search_term_string}',
           'query-input' => 'required name=search_term_string',
         ];
     }
@@ -799,26 +924,28 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
     mits_graph_add($webSite);
 }
 
-/* Organization */
+/**
+ * Organization
+ */
 if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
     global $lng;
 
     $org = [
       '@type'         => 'Organization',
       '@id'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
-      'name'          => mits_ml(MODULE_MITS_JSON_LD_NAME),
-      'alternateName' => mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME),
-      'description'   => mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION),
+      'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
+      'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
+      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
       'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
     ];
 
     if ($logo) {
-        $org['logo'] = $logo;
+        $org['logo']  = $logo;
         $org['image'] = $logo;
     }
 
     if (mits_flag('MODULE_MITS_JSON_LD_SHOW_CONTACT') && isset($lng->catalog_languages)) {
-        $langs = array_map(fn($x) => $x['name'], $lng->catalog_languages);
+        $langs    = array_map(static fn ($x) => $x['name'], $lng->catalog_languages);
         $contacts = [];
 
         $map = [
@@ -832,7 +959,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
             if (defined($const) && !empty(constant($const))) {
                 $contacts[] = [
                   '@type'             => 'ContactPoint',
-                  'telephone'         => mits_ml(constant($const)),
+                  'telephone'         => mits_jsonld_sanitize(mits_ml(constant($const))),
                   'contactType'       => $type,
                   'areaServed'        => strtoupper($_SESSION['language_code']),
                   'availableLanguage' => $langs,
@@ -843,7 +970,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
         if (defined('MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT') && !empty(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)) {
             $contacts[] = [
               '@type'       => 'ContactPoint',
-              'telephone'   => mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT),
+              'telephone'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)),
               'contactType' => 'customer service',
             ];
         }
@@ -853,7 +980,6 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
         }
     }
 
-    // Social
     if (defined('MODULE_MITS_JSON_LD_SOCIAL_MEDIA') && !empty(MODULE_MITS_JSON_LD_SOCIAL_MEDIA)) {
         $org['sameAs'] = array_map('trim', explode(',', MODULE_MITS_JSON_LD_SOCIAL_MEDIA));
     }
@@ -862,20 +988,22 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
     mits_graph_add($org);
 }
 
-/* LocalBusiness */
+/**
+ * LocalBusiness
+ */
 if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     $loc = [
       '@type'     => 'LocalBusiness',
-      'name'      => mits_ml(MODULE_MITS_JSON_LD_NAME),
+      'name'      => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
       '@id'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
       'url'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
-      'telephone' => mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT),
+      'telephone' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)),
       'address'   => [
         '@type'           => 'PostalAddress',
-        'streetAddress'   => mits_ml(MODULE_MITS_JSON_LD_LOCATION_STREETADDRESS),
-        'addressLocality' => mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSLOCALITY),
-        'postalCode'      => mits_ml(MODULE_MITS_JSON_LD_LOCATION_POSTALCODE),
-        'addressCountry'  => mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSCOUNTRY),
+        'streetAddress'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_STREETADDRESS)),
+        'addressLocality' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSLOCALITY)),
+        'postalCode'      => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_POSTALCODE)),
+        'addressCountry'  => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSCOUNTRY)),
       ],
     ];
 
@@ -886,8 +1014,8 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     if (!empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE) && !empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE)) {
         $loc['geo'] = [
           '@type'     => 'GeoCoordinates',
-          'latitude'  => mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE),
-          'longitude' => mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE),
+          'latitude'  => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE)),
+          'longitude' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE)),
         ];
     }
 
@@ -899,17 +1027,19 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     mits_graph_add($loc);
 }
 
-/* Breadcrumb */
-if (mits_flag('MODULE_MITS_JSON_LD_SHOW_BREADCRUMB')
-  && isset($breadcrumb)
-) {
+/**
+ * Breadcrumb
+ */
+if (mits_flag('MODULE_MITS_JSON_LD_SHOW_BREADCRUMB') && isset($breadcrumb)) {
     $items = [];
+
     foreach ($breadcrumb->_trail as $i => $bc) {
         $items[] = [
           '@type'    => 'ListItem',
           'position' => $i + 1,
-          'name'     => $bc['title'],
-          'item'     => $bc['link'] ?: xtc_href_link(basename($PHP_SELF), xtc_get_all_get_params([], true), $request_type),
+          'name'     => mits_jsonld_sanitize($bc['title']),
+          'item'     => $bc['link']
+            ?: xtc_href_link(basename($PHP_SELF), xtc_get_all_get_params([], true), $request_type),
         ];
     }
 
@@ -919,39 +1049,48 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_BREADCRUMB')
     ]);
 }
 
-
-/* ContactPage */
-if (basename($PHP_SELF) == FILENAME_CONTENT
+/**
+ * ContactPage (Kontaktseite)
+ */
+if (
+  basename($PHP_SELF) === FILENAME_CONTENT
   && isset($_GET['coID'])
   && (int)$_GET['coID'] === 7
   && mits_flag('MODULE_MITS_JSON_LD_SHOW_CONTACT')
   && isset($shop_content_data['content_title'])
 ) {
-    $meta_descr = isset($metadata_array['description']) ? $metadata_array['description'] : '';
+    $metaDescr = isset($metadata_array['description']) ? $metadata_array['description'] : '';
 
     $schema = [
       '@type'       => 'ContactPage',
       'url'         => xtc_href_link(FILENAME_CONTENT, 'coID=7', 'SSL', false),
-      'name'        => strip_tags($shop_content_data['content_title']),
-      'description' => str_replace(["\r", "\n"], ' ', strip_tags(decode_htmlentities($meta_descr))),
+      'name'        => mits_jsonld_sanitize($shop_content_data['content_title']),
+      'description' => mits_jsonld_sanitize(decode_htmlentities($metaDescr)),
     ];
 
     $schema = mits_jsonld_clean($schema);
     mits_graph_add($schema);
 }
 
-/* Produktseite: Product + Offers + Reviews + Tags */
-if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
+/**
+ * Produktseite: Product + Offers + Reviews + Tags
+ */
+if (
+  basename($PHP_SELF) === FILENAME_PRODUCT_INFO
   && isset($product)
-  && is_object($product) && $product->isProduct()
+  && is_object($product)
+  && $product->isProduct()
   && mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT')
 ) {
     global $manufacturer, $productDataArray, $xtPrice;
 
     $productImages = [];
+
     if (!empty($product->data['products_image'])) {
         $productImages[] = $product->productImage($product->data['products_image'], 'info');
+
         $mo = xtc_get_products_mo_images($product->data['products_id']);
+
         if ($mo) {
             foreach ($mo as $m) {
                 $productImages[] = $product->productImage($m['image_name'], 'info');
@@ -959,40 +1098,42 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
         }
     }
 
-    $desc = strip_tags($product->data['products_description']);
-    $desc = html_entity_decode($desc, ENT_NOQUOTES, $_SESSION['language_charset']);
+    $productURL = xtc_href_link(
+      FILENAME_PRODUCT_INFO,
+      xtc_product_link($product->data['products_id']),
+      'NONSSL',
+      false
+    );
 
-    $productURL = xtc_href_link(FILENAME_PRODUCT_INFO, xtc_product_link($product->data['products_id']), 'NONSSL', false);
     $schema = [
       '@type'            => 'Product',
       '@id'              => $productURL,
       'url'              => $productURL,
       'mainEntityOfPage' => [
         '@type' => 'WebPage',
-        '@id'   => $productURL
+        '@id'   => $productURL,
       ],
       'productID'        => $product->data['products_id'],
-      'sku'              => $product->data['products_model'] ?: $product->data['products_id'],
-      'gtin13'           => $product->data['products_ean'],
-      'mpn'              => $product->data['products_manufacturers_model'],
+      'sku'              => mits_jsonld_sanitize(
+        $product->data['products_model'] ?: $product->data['products_id']
+      ),
+      'gtin13'           => mits_jsonld_sanitize($product->data['products_ean']),
+      'mpn'              => mits_jsonld_sanitize($product->data['products_manufacturers_model']),
       'image'            => $productImages,
-      'name'             => $product->data['products_name'],
-      'description'      => $desc,
+      'name'             => mits_jsonld_sanitize($product->data['products_name']),
+      'description'      => mits_jsonld_sanitize($product->data['products_description']),
     ];
 
-    if (isset($manufacturer['manufacturers_name'])
-      && $manufacturer['manufacturers_name'] != ''
-    ) {
+    if (isset($manufacturer['manufacturers_name']) && $manufacturer['manufacturers_name'] !== '') {
         $schema['brand'] = [
           '@type' => 'Brand',
-          'name'  => $manufacturer['manufacturers_name'],
+          'name'  => mits_jsonld_sanitize($manufacturer['manufacturers_name']),
         ];
     }
 
-    $schema_light = $schema;
-
     if (mits_jsonld_tags_enabled_for_product($product)) {
         $additional = mits_build_additional_properties($product->data['products_id']);
+
         if (!empty($additional)) {
             $schema['additionalProperty'] = $additional;
         }
@@ -1000,8 +1141,9 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
 
     $reviewsCount = $product->getReviewsCount($product->data['products_id']);
 
-    if (mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT_REVIEWS')
-      && $_SESSION['customers_status']['customers_status_read_reviews'] == '1'
+    if (
+      mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT_REVIEWS')
+      && $_SESSION['customers_status']['customers_status_read_reviews'] === '1'
       && $reviewsCount > 0
     ) {
         $schema['aggregateRating'] = [
@@ -1011,17 +1153,19 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
         ];
 
         $reviewList = $product->getReviews($product->data['products_id']);
+
         if ($reviewList) {
             foreach ($reviewList as $r) {
                 $date = DateTime::createFromFormat('d.m.Y', $r['DATE']);
+
                 $schema['review'][] = [
                   '@type'         => 'Review',
                   'author'        => [
                     '@type' => 'Person',
-                    'name'  => $r['AUTHOR'],
+                    'name'  => mits_jsonld_sanitize($r['AUTHOR']),
                   ],
                   'datePublished' => $date ? $date->format('Y-m-d') : '',
-                  'reviewBody'    => strip_tags($r['TEXT']),
+                  'reviewBody'    => mits_jsonld_sanitize($r['TEXT']),
                   'reviewRating'  => [
                     '@type'       => 'Rating',
                     'ratingValue' => $r['RATING_VOTE'],
@@ -1033,11 +1177,12 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
         }
     }
 
-    if (defined('MODULE_TS_TRUSTEDSHOPS_ID')
+    if (
+      defined('MODULE_TS_TRUSTEDSHOPS_ID')
       && defined('MODULE_TS_PRODUCT_STICKER_STATUS')
-      && MODULE_TS_PRODUCT_STICKER_STATUS == '1'
+      && MODULE_TS_PRODUCT_STICKER_STATUS === '1'
       && defined('MODULE_TS_PRODUCT_STICKER')
-      && MODULE_TS_PRODUCT_STICKER != ''
+      && MODULE_TS_PRODUCT_STICKER !== ''
       && !empty($productDataArray['TS_FEED_REVIEW'])
       && $productDataArray['TS_FEED_REVIEW'] > 0
     ) {
@@ -1048,26 +1193,32 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO
         ];
     }
 
-    $offersBlock = mits_build_offers_for_product($product, $productDataArray);
+    $offersBlock      = mits_build_offers_for_product($product, $productDataArray);
     $schema['offers'] = $offersBlock;
 
     $schema = mits_jsonld_clean($schema);
     mits_graph_add($schema);
-    mits_output_json($schema);
 }
 
-if (basename($PHP_SELF) == FILENAME_PRODUCT_REVIEWS_INFO
+/**
+ * Einzelne Bewertungsseite (Produktbewertung)
+ */
+if (
+  basename($PHP_SELF) === FILENAME_PRODUCT_REVIEWS_INFO
   && mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT_REVIEWS_INFO')
-  && isset($reviews) && is_array($reviews) && count($reviews) > 0
-  && isset($product) && is_object($product)
+  && isset($reviews)
+  && is_array($reviews)
+  && count($reviews) > 0
+  && isset($product)
+  && is_object($product)
 ) {
-    $r = $reviews;
+    $r     = $reviews;
     $count = $product->getReviewsCount($r['products_id']);
-    $date = DateTime::createFromFormat('d.m.Y', $r['date_added']);
+    $date  = DateTime::createFromFormat('d.m.Y', $r['date_added']);
 
     $schema = [
-      '@type'         => 'Review',
-      'reviewRating'  => [
+      '@type'        => 'Review',
+      'reviewRating' => [
         '@type'       => 'AggregateRating',
         'ratingValue' => $r['reviews_rating'],
         'ratingCount' => $count,
@@ -1075,16 +1226,16 @@ if (basename($PHP_SELF) == FILENAME_PRODUCT_REVIEWS_INFO
         'worstRating' => '1',
         'bestRating'  => '5',
       ],
-      'itemReviewed'  => [
+      'itemReviewed' => [
         '@type' => 'Product',
-        'name'  => $r['products_name'],
+        'name'  => mits_jsonld_sanitize($r['products_name']),
       ],
-      'author'        => [
+      'author'       => [
         '@type' => 'Person',
-        'name'  => $r['customers_name'],
+        'name'  => mits_jsonld_sanitize($r['customers_name']),
       ],
       'datePublished' => $date ? $date->format('Y-m-d') : $r['date_added'],
-      'reviewBody'    => strip_tags($r['reviews_text']),
+      'reviewBody'    => mits_jsonld_sanitize($r['reviews_text']),
     ];
 
     $schema = mits_jsonld_clean($schema);
