@@ -1,4 +1,4 @@
-# MITS JSON+LD für modified eCommerce Shopsoftware
+# MITS JSON-LD für modified eCommerce Shopsoftware
 (c) Copyright 2020 by Hetfield - MerZ IT-SerVice
 
 - Author: 	Hetfield - https://www.merz-it-service.de
@@ -6,7 +6,7 @@
 
 <hr />
 
-Mit diesem Modul erweitern Sie Ihre modified eCommerce Shopsoftware um die von Google empfohlenen JSON+LD Markups.
+Mit diesem Modul erweitern Sie Ihre modified eCommerce Shopsoftware um die von Google empfohlenen JSON-LD Markups.
 Diese Modul unterstützt die Markups für folgende Typen:
 
 - WebSite: name, alternateName, description, url und logo
@@ -31,7 +31,7 @@ gegen das Urheberrecht und die GPL und werden zivil- und strafrechtlich verfolgt
 
 <hr />
 
-## Anleitung für das Modul MITS JSON+LD
+## Anleitung für das Modul MITS JSON-LD
 
 ### Installation
 
@@ -39,9 +39,9 @@ Systemvoraussetzung: Funktionsfähige modified eCommerce Shopsoftware ab der Ver
 
 Vor der Installation des Moduls sichern sie bitte komplett ihre aktuelle Shopinstallation (Dateien und Datenbank)!
 Für eventuelle Schäden übernehmen wir keine Haftung!
-Die Installation und Nutzung des Moduls **MITS JSON+LD** erfolgt auf eigene Gefahr!
+Die Installation und Nutzung des Moduls **MITS JSON-LD** erfolgt auf eigene Gefahr!
 
-Die Installation des Modul **MITS JSON+LD** ist ziemlich einfach.
+Die Installation des Modul **MITS JSON-LD** ist ziemlich einfach.
 
 1. Führen Sie zuerst eine komplette Sicherung des Shops durch. Sichern Sie dabei die Datenbank und alle Dateien Ihrer Shopinstallation. 
 
@@ -53,7 +53,7 @@ Die Installation des Modul **MITS JSON+LD** ist ziemlich einfach.
 4. Wechseln sie in den Administrationsbereich und rufen sie den Menüpunkt Module -> System-Module auf.
 
 5. Markieren sie dort den Eintrag 
-   ***MITS JSON+LD für die modified eCommerce Shopsoftware © by Hetfield (MerZ IT-SerVice)***
+   ***MITS JSON-LD für die modified eCommerce Shopsoftware © by Hetfield (MerZ IT-SerVice)***
    und klicken sie dann auf der rechten Seite auf den Button Installieren. Das Modul wird nun komplett installiert. 
        
 6. Konfigurieren sie nun das Modul nach ihren Wünschen. Die verschiedenen Einstellmöglichkeiten sind im Modul erklärt.
@@ -63,7 +63,7 @@ Die Installation des Modul **MITS JSON+LD** ist ziemlich einfach.
 
 <hr />
 
-Wir hoffen, das Modul **MITS JSON+LD für die modified eCommerce Shopsoftware** gefällt ihnen!
+Wir hoffen, das Modul **MITS JSON-LD für die modified eCommerce Shopsoftware** gefällt ihnen!
 Benötigen sie Unterstützung bei der individuellen Anpassung des Moduls oder haben sie eventuell doch Probleme beim Einbau?
 Gerne können sie unseren kostenpflichtigen Support in Anspruch nehmen.
 Kontaktieren sie uns einfach unter <a href="https://www.merz-it-service.de/Kontakt.html">info(at)merz-it-service.de</a>

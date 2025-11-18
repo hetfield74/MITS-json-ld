@@ -15,12 +15,12 @@
 $modulname = strtoupper("mits_json_ld");
 
 $lang_array = array(
-  'MODULE_' . $modulname . '_TITLE'        => 'MITS JSON+LD pour modified eCommerce Shopsoftware <span style="white-space:nowrap;">© par <span style="padding:2px;background:#ffe;color:#6a9;font-weight:bold;">Hetfield (MerZ IT-SerVice)</span></span>',
+  'MODULE_' . $modulname . '_TITLE'        => 'MITS JSON-LD pour modified eCommerce Shopsoftware <span style="white-space:nowrap;">© par <span style="padding:2px;background:#ffe;color:#6a9;font-weight:bold;">Hetfield (MerZ IT-SerVice)</span></span>',
   'MODULE_' . $modulname . '_DESCRIPTION'  => '
     <a href="https://www.merz-it-service.de/" target="_blank">
       <img src="' . (ENABLE_SSL === true ? HTTPS_SERVER : HTTP_SERVER) . DIR_WS_CATALOG . DIR_WS_IMAGES . 'merz-it-service.png" border="0" alt="MerZ IT-SerVice" style="display:block;max-width:100%;height:auto;" />
     </a><br />
-    <p style="font-size: larger">Ce module ajoute à votre boutique modified eCommerce les balises JSON+LD recommandées par Google.</p>
+    <p style="font-size: larger">Ce module ajoute à votre boutique modified eCommerce les balises JSON-LD recommandées par Google.</p>
     <p>Ce module prend en charge les types de balisage suivants :</p>
     <ul style="font-size: larger">
       <li>WebSite <small>name, alternateName, description, url et logo</small></li>
@@ -35,40 +35,40 @@ $lang_array = array(
     <p style="font-size: larger">Ce module peut bien sûr être étendu et adapté selon vos besoins. Pour toute demande de personnalisation, veuillez nous contacter directement.<br />
     <div style="text-align:center;">
       <small>La version la plus récente du module est toujours disponible sur Github !</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON+LD sur Github</a>
+      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD sur Github</a>
     </div>
     <p>Pour toute question, problème ou demande concernant ce module ou tout autre sujet lié à modified eCommerce Shopsoftware, n’hésitez pas à nous contacter :</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Page de contact MerZ-IT-SerVice.de</a></div>  
 ',
   'MODULE_' . $modulname . '_STATUS_TITLE' => 'Activer le module ?',
-  'MODULE_' . $modulname . '_STATUS_DESC'  => 'Activer le module MITS JSON+LD dans la boutique ?',
+  'MODULE_' . $modulname . '_STATUS_DESC'  => 'Activer le module MITS JSON-LD dans la boutique ?',
 
   'MODULE_' . $modulname . '_SHOW_BREADCRUMB_TITLE' => 'Activer le fil d’Ariane ?',
-  'MODULE_' . $modulname . '_SHOW_BREADCRUMB_DESC'  => 'Activer le balisage JSON+LD pour le fil d’Ariane ?',
+  'MODULE_' . $modulname . '_SHOW_BREADCRUMB_DESC'  => 'Activer le balisage JSON-LD pour le fil d’Ariane ?',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_TITLE' => 'Activer les produits ?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'Activer le balisage JSON+LD pour les produits sur la page de détails ?',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'Activer le balisage JSON-LD pour les produits sur la page de détails ?',
 
-  'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Afficher les attributs dans JSON+LD',
+  'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Afficher les attributs dans JSON-LD',
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_DESC'  => 'Les attributs de produits doivent-ils être affichés comme des offres ?',
 
-  'MODULE_' . $modulname . '_ENABLE_TAGS_TITLE' => 'Afficher les propriétés du produit dans JSON+LD',
+  'MODULE_' . $modulname . '_ENABLE_TAGS_TITLE' => 'Afficher les propriétés du produit dans JSON-LD',
   'MODULE_' . $modulname . '_ENABLE_TAGS_DESC'  => 'Les propriétés du produit (tags) doivent-elles être affichées dans additionalProperty ?',
 
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Nombre maximal d’offres',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Évite les problèmes de mémoire en cas de nombreux attributs. Par défaut : 100.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Activer les avis des produits ?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activer le balisage JSON+LD pour les avis sur la page produit ? Seulement en combinaison avec le balisage Produit.',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activer le balisage JSON-LD pour les avis sur la page produit ? Seulement en combinaison avec le balisage Produit.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_TITLE' => 'Activer la page détaillée d’un avis ?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_DESC'  => 'Activer le balisage JSON+LD pour la page de détails d’un avis ?',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_DESC'  => 'Activer le balisage JSON-LD pour la page de détails d’un avis ?',
 
   'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_TITLE' => 'Activer la Sitelinks Searchbox ?',
-  'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_DESC'  => 'Activer le balisage JSON+LD pour la Sitelinks Searchbox ?',
+  'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_DESC'  => 'Activer le balisage JSON-LD pour la Sitelinks Searchbox ?',
 
   'MODULE_' . $modulname . '_SHOW_WEBSITE_TITLE' => 'Activer WebSite ?',
-  'MODULE_' . $modulname . '_SHOW_WEBSITE_DESC'  => 'Activer le balisage JSON+LD pour WebSite ?',
+  'MODULE_' . $modulname . '_SHOW_WEBSITE_DESC'  => 'Activer le balisage JSON-LD pour WebSite ?',
 
   'MODULE_' . $modulname . '_SHOW_LOGO_TITLE' => 'Activer le logo ?',
   'MODULE_' . $modulname . '_SHOW_LOGO_DESC'  => 'Le logo est utilisé dans les balisages WebSite, Organization et LocalBusiness.',
@@ -77,13 +77,13 @@ $lang_array = array(
   'MODULE_' . $modulname . '_LOGOFILE_DESC'  => 'Votre logo d’entreprise, nom de fichier sans chemin. Le fichier doit se trouver dans le dossier img du template utilisé (par défaut : logo.gif).',
 
   'MODULE_' . $modulname . '_SHOW_ORGANISTATION_TITLE' => 'Activer Organization ?',
-  'MODULE_' . $modulname . '_SHOW_ORGANISTATION_DESC'  => 'Activer le balisage JSON+LD pour Organization ?',
+  'MODULE_' . $modulname . '_SHOW_ORGANISTATION_DESC'  => 'Activer le balisage JSON-LD pour Organization ?',
 
   'MODULE_' . $modulname . '_SHOW_CONTACT_TITLE' => 'Activer ContactPage ?',
-  'MODULE_' . $modulname . '_SHOW_CONTACT_DESC'  => 'Activer le balisage JSON+LD pour ContactPage ?',
+  'MODULE_' . $modulname . '_SHOW_CONTACT_DESC'  => 'Activer le balisage JSON-LD pour ContactPage ?',
 
   'MODULE_' . $modulname . '_SHOW_LOCATION_TITLE' => 'Activer LocalBusiness ?',
-  'MODULE_' . $modulname . '_SHOW_LOCATION_DESC'  => 'Activer le balisage JSON+LD pour LocalBusiness ?',
+  'MODULE_' . $modulname . '_SHOW_LOCATION_DESC'  => 'Activer le balisage JSON-LD pour LocalBusiness ?',
 
   'MODULE_' . $modulname . '_NAME_TITLE' => 'Nom de l’entreprise / du site',
   'MODULE_' . $modulname . '_NAME_DESC'  => 'Le nom est utilisé dans les balisages WebSite, Organization et LocalBusiness.',
@@ -138,12 +138,12 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;padding:2px;border:1px solid #900;">Veuillez effectuer une mise à jour !</span>',
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_DESC'  => '',
-  'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'Le module MITS JSON+LD a été mis à jour.',
+  'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'Le module MITS JSON-LD a été mis à jour.',
   'MODULE_' . $modulname . '_UPDATE_ERROR'           => 'Erreur',
   'MODULE_' . $modulname . '_UPDATE_MODUL'           => 'Mettre à jour le module',
-  'MODULE_' . $modulname . '_DELETE_MODUL'           => 'Supprimer complètement MITS JSON+LD du serveur',
-  'MODULE_' . $modulname . '_CONFIRM_DELETE_MODUL'   => 'Voulez-vous vraiment supprimer le module MITS JSON+LD ainsi que tous ses fichiers du serveur ?',
-  'MODULE_' . $modulname . '_DELETE_FINISHED'        => 'Le module MITS JSON+LD a été supprimé du serveur.',
+  'MODULE_' . $modulname . '_DELETE_MODUL'           => 'Supprimer complètement MITS JSON-LD du serveur',
+  'MODULE_' . $modulname . '_CONFIRM_DELETE_MODUL'   => 'Voulez-vous vraiment supprimer le module MITS JSON-LD ainsi que tous ses fichiers du serveur ?',
+  'MODULE_' . $modulname . '_DELETE_FINISHED'        => 'Le module MITS JSON-LD a été supprimé du serveur.',
 );
 
 foreach ($lang_array as $key => $val) {

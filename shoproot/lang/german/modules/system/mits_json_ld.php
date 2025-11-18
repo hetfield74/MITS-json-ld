@@ -15,12 +15,12 @@
 $modulname = strtoupper("mits_json_ld");
 
 $lang_array = array(
-  'MODULE_' . $modulname . '_TITLE'        => 'MITS JSON+LD f&uuml;r modified eCommerce Shopsoftware <span style="white-space:nowrap;">&copy; by <span style="padding:2px;background:#ffe;color:#6a9;font-weight:bold;">Hetfield (MerZ IT-SerVice)</span></span>',
+  'MODULE_' . $modulname . '_TITLE'        => 'MITS JSON-LD f&uuml;r modified eCommerce Shopsoftware <span style="white-space:nowrap;">&copy; by <span style="padding:2px;background:#ffe;color:#6a9;font-weight:bold;">Hetfield (MerZ IT-SerVice)</span></span>',
   'MODULE_' . $modulname . '_DESCRIPTION'  => '
     <a href="https://www.merz-it-service.de/" target="_blank">
       <img src="' . (ENABLE_SSL === true ? HTTPS_SERVER : HTTP_SERVER) . DIR_WS_CATALOG . DIR_WS_IMAGES . 'merz-it-service.png" border="0" alt="MerZ IT-SerVice" style="display:block;max-width:100%;height:auto;" />
     </a><br />
-    <p style="font-size: larger">Mit diesem Modul erweitern Sie Ihre modified eCommerce Shopsoftware um die von Google empfohlenen JSON+LD Markups.</p>
+    <p style="font-size: larger">Mit diesem Modul erweitern Sie Ihre modified eCommerce Shopsoftware um die von Google empfohlenen JSON-LD Markups.</p>
     <p>Diese Modul unterstützt die Markups für folgende Typen:</p>
     <ul style="font-size: larger">
       <li>WebSite <small>name, alternateName, description, url und logo</small></li>
@@ -35,40 +35,40 @@ $lang_array = array(
     <p style="font-size: larger">Das Modul kann auf Wunsch nat&uuml;rlich noch erweitert und angepasst werden. F&uuml;r Ihre individuellen Anpassungsw&uuml;sche wenden Sie sich einfach direkt an uns.<br />
     <div style="text-align:center;">
       <small>Nur auf Github gibt es immer die aktuellste Version des Moduls!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON+LD on Github</a>
+      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD on Github</a>
     </div>
     <p>Bei Fragen, Problemen oder W&uuml;nschen zu diesem Modul oder auch zu anderen Anliegen rund um die modified eCommerce Shopsoftware nehmen Sie einfach Kontakt zu uns auf:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Kontaktseite auf MerZ-IT-SerVice.de</strong></a></div>  
 ',
   'MODULE_' . $modulname . '_STATUS_TITLE' => 'Modul aktivieren?',
-  'MODULE_' . $modulname . '_STATUS_DESC'  => 'Das Modul MITS JSON+LD im Shop aktivieren?',
+  'MODULE_' . $modulname . '_STATUS_DESC'  => 'Das Modul MITS JSON-LD im Shop aktivieren?',
 
   'MODULE_' . $modulname . '_SHOW_BREADCRUMB_TITLE' => 'Breadcrumb aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_BREADCRUMB_DESC'  => 'JSON+LD Markup f&uuml;r die Breadcrumb aktivieren?',
+  'MODULE_' . $modulname . '_SHOW_BREADCRUMB_DESC'  => 'JSON-LD Markup f&uuml;r die Breadcrumb aktivieren?',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_TITLE' => 'Produkte aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'JSON+LD Markup f&uuml;r Produkte auf der Produktdetailseite aktivieren?',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'JSON-LD Markup f&uuml;r Produkte auf der Produktdetailseite aktivieren?',
 
-  'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Artikelmerkmale (Attribute) im JSON+LD ausgeben',
+  'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Artikelmerkmale (Attribute) im JSON-LD ausgeben',
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_DESC'  => 'Sollen die Artikelmerkmale (Produktattribute) als Offers ausgegeben werden.',
 
-  'MODULE_' . $modulname . '_ENABLE_TAGS_TITLE' => 'Artikeleigenschaften im JSON+LD ausgeben',
+  'MODULE_' . $modulname . '_ENABLE_TAGS_TITLE' => 'Artikeleigenschaften im JSON-LD ausgeben',
   'MODULE_' . $modulname . '_ENABLE_TAGS_DESC'  => 'Sollen die Artikeleigenschaften (Produkt-Tags) in additionalProperty ausgegeben werden?',
 
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Max. Anzahl Offers',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Verhindert Memory-Probleme bei vielen Attributen. Default: 100.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Bewertungen bei Produkten aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON+LD Markup f&uuml;r die Bewertungen auf der Produktdetailseite aktivieren? Nur in Kombination mit dem der Nutzung des Markups f&uuml;r das Produkt.',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON-LD Markup f&uuml;r die Bewertungen auf der Produktdetailseite aktivieren? Nur in Kombination mit dem der Nutzung des Markups f&uuml;r das Produkt.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_TITLE' => 'Bewertungsdetailseite aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_DESC'  => 'JSON+LD Markup f&uuml;r die Bewertungen auf der Detailseite einer Bewertung aktivieren?',
+  'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_INFO_DESC'  => 'JSON-LD Markup f&uuml;r die Bewertungen auf der Detailseite einer Bewertung aktivieren?',
 
   'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_TITLE' => 'Sitelinks Searchbox aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_DESC'  => 'JSON+LD Markup f&uuml;r die Sitelinks Searchbox aktivieren?',
+  'MODULE_' . $modulname . '_SHOW_SEARCHFIELD_DESC'  => 'JSON-LD Markup f&uuml;r die Sitelinks Searchbox aktivieren?',
 
   'MODULE_' . $modulname . '_SHOW_WEBSITE_TITLE' => 'WebSite aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_WEBSITE_DESC'  => 'JSON+LD Markup f&uuml;r die WebSite aktivieren?',
+  'MODULE_' . $modulname . '_SHOW_WEBSITE_DESC'  => 'JSON-LD Markup f&uuml;r die WebSite aktivieren?',
 
   'MODULE_' . $modulname . '_SHOW_LOGO_TITLE' => 'Logo aktivieren?',
   'MODULE_' . $modulname . '_SHOW_LOGO_DESC'  => 'Das Logo wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet.',
@@ -77,13 +77,13 @@ $lang_array = array(
   'MODULE_' . $modulname . '_LOGOFILE_DESC'  => 'Ihr Firmenlogo, Dateiname bitte ohne Pfad eingeben. Datei muss im img-Ordner des verwendeten Templates liegen (Standard: logo.gif). Das Logo wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet.',
 
   'MODULE_' . $modulname . '_SHOW_ORGANISTATION_TITLE' => 'Organization aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_ORGANISTATION_DESC'  => 'Soll das JSON+LD Markup f&uuml;r den Typ Organization aktiviert werden?',
+  'MODULE_' . $modulname . '_SHOW_ORGANISTATION_DESC'  => 'Soll das JSON-LD Markup f&uuml;r den Typ Organization aktiviert werden?',
 
   'MODULE_' . $modulname . '_SHOW_CONTACT_TITLE' => 'ContactPage aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_CONTACT_DESC'  => 'Soll das JSON+LD Markup f&uuml;r den Typ ContactPage aktiviert werden?',
+  'MODULE_' . $modulname . '_SHOW_CONTACT_DESC'  => 'Soll das JSON-LD Markup f&uuml;r den Typ ContactPage aktiviert werden?',
 
   'MODULE_' . $modulname . '_SHOW_LOCATION_TITLE' => 'LocalBusiness aktivieren?',
-  'MODULE_' . $modulname . '_SHOW_LOCATION_DESC'  => 'Soll das JSON+LD Markup f&uuml;r den Typ LocalBusiness aktiviert werden?',
+  'MODULE_' . $modulname . '_SHOW_LOCATION_DESC'  => 'Soll das JSON-LD Markup f&uuml;r den Typ LocalBusiness aktiviert werden?',
 
   'MODULE_' . $modulname . '_NAME_TITLE' => 'Name der Firma/Webseite',
   'MODULE_' . $modulname . '_NAME_DESC'  => 'Der Name wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet.',
@@ -138,12 +138,12 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => ' <span style="font-weight:bold;color:#900;background:#ff6;padding:2px;border:1px solid #900;">Bitte Modulaktualisierung durchf&uuml;hren!</span>',
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_DESC'  => '',
-  'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'Das Modul MITS JSON+LD wurde aktualisiert.',
+  'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'Das Modul MITS JSON-LD wurde aktualisiert.',
   'MODULE_' . $modulname . '_UPDATE_ERROR'           => 'Fehler',
   'MODULE_' . $modulname . '_UPDATE_MODUL'           => 'Modul aktualisieren',
-  'MODULE_' . $modulname . '_DELETE_MODUL'           => 'MITS JSON+LD komplett vom Server entfernen',
-  'MODULE_' . $modulname . '_CONFIRM_DELETE_MODUL'   => 'M&ouml;chten sie das Modul MITS JSON+LD mit allen Dateien wirklich vom Server l&ouml;schen?',
-  'MODULE_' . $modulname . '_DELETE_FINISHED'        => 'Das Modul MITS JSON+LD wurde vom Server gel&ouml;scht.',
+  'MODULE_' . $modulname . '_DELETE_MODUL'           => 'MITS JSON-LD komplett vom Server entfernen',
+  'MODULE_' . $modulname . '_CONFIRM_DELETE_MODUL'   => 'M&ouml;chten sie das Modul MITS JSON-LD mit allen Dateien wirklich vom Server l&ouml;schen?',
+  'MODULE_' . $modulname . '_DELETE_FINISHED'        => 'Das Modul MITS JSON-LD wurde vom Server gel&ouml;scht.',
 );
 
 foreach ($lang_array as $key => $val) {
