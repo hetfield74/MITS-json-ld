@@ -1,0 +1,924 @@
+<?php
+/**
+ * --------------------------------------------------------------
+ * File: mits_json_ld.php
+ * Date: 13.11.2025
+ * Time: 17:06
+ *
+ * Author: Hetfield
+ * Copyright: (c) 2025 - MerZ IT-SerVice
+ * Web: https://www.merz-it-service.de
+ * Contact: info@merz-it-service.de
+ * --------------------------------------------------------------
+ */
+
+if (!defined('MODULE_MITS_JSON_LD_STATUS') || MODULE_MITS_JSON_LD_STATUS !== 'true') {
+    return;
+}
+
+require_once DIR_FS_INC . 'parse_multi_language_value.inc.php';
+
+/**
+ * Helper: Flag-Konstanten als bool
+ */
+function mits_flag($const)
+{
+    return defined($const) && constant($const) === 'true';
+}
+
+/**
+ * Helper: Mehrsprachige Werte mit parse_multi_language_value
+ */
+function mits_ml($value)
+{
+    return parse_multi_language_value($value, $_SESSION['language_code']);
+}
+
+/**
+ * Helper: JSON-LD ausgeben
+ */
+function mits_output_json(array $data)
+{
+    echo '<script type="application/ld+json">' .
+      json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .
+      '</script>';
+}
+
+/**
+ * Helper: Logo-Pfad (Dateisystem-URL) ermitteln
+ */
+function mits_get_logo()
+{
+    if (!mits_flag('MODULE_MITS_JSON_LD_SHOW_LOGO') || MODULE_MITS_JSON_LD_LOGOFILE === '') {
+        return null;
+    }
+
+    $paths = [
+      'templates/' . CURRENT_TEMPLATE . '/img/' . MODULE_MITS_JSON_LD_LOGOFILE,
+      'images/' . MODULE_MITS_JSON_LD_LOGOFILE,
+    ];
+
+    foreach ($paths as $p) {
+        if (is_file(DIR_FS_CATALOG . $p)) {
+            return DIR_WS_BASE . $p;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Hilfsklasse: kartesisches Produkt für Attribute
+ */
+class MITS_CombineAttributes
+{
+    private array $cartesian_attributes;
+
+    /**
+     * @param array $arr
+     */
+    public function __construct(array $arr)
+    {
+        $this->cartesian_attributes = [];
+        if (!empty($arr)) {
+            $this->buildCartesian([], $arr, 0, count($arr) - 1);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getCombinedAttributes(): array
+    {
+        return $this->cartesian_attributes;
+    }
+
+    /**
+     * @param array $soFar
+     * @param array $arr
+     * @param int $pos
+     * @param int $max
+     * @return void
+     */
+    private function buildCartesian(array $soFar, array $arr, int $pos, int $max): void
+    {
+        $keys = array_keys($arr);
+        $key = $keys[$pos];
+
+        for ($i = 0; $i < count($arr[$key]); $i++) {
+            $value = $arr[$key][$i];
+
+            if ($pos === $max) {
+                $this->cartesian_attributes[] = array_merge($soFar, [$value]);
+            } else {
+                $this->buildCartesian(array_merge($soFar, [$value]), $arr, $pos + 1, $max);
+            }
+        }
+    }
+}
+
+/**
+ * Prüft, ob Attribute im JSON-LD für dieses Produkt ausgegeben werden sollen.
+ * Berücksichtigt globalen Modul-Schalter UND artikelbezogenen Schalter.
+ */
+function mits_jsonld_attributes_enabled_for_product($product)
+{
+    // globaler Schalter (Default: true, wenn nicht gesetzt)
+    $globalEnabled = !defined('MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES')
+      || MODULE_MITS_JSON_LD_ENABLE_ATTRIBUTES === 'true';
+
+    // artikelbezogener Schalter (NULL/fehlend => global)
+    if (!isset($product->data['products_jsonld_attributes_enabled'])) {
+        return $globalEnabled;
+    }
+
+    return (bool)$product->data['products_jsonld_attributes_enabled'];
+}
+
+/**
+ * Prüft, ob Tags im JSON-LD für dieses Produkt ausgegeben werden sollen.
+ */
+function mits_jsonld_tags_enabled_for_product($product)
+{
+    $globalEnabled = !defined('MODULE_MITS_JSON_LD_ENABLE_TAGS')
+      || MODULE_MITS_JSON_LD_ENABLE_TAGS === 'true';
+
+    if (!isset($product->data['products_jsonld_tags_enabled'])) {
+        return $globalEnabled;
+    }
+
+    return (bool)$product->data['products_jsonld_tags_enabled'];
+}
+
+
+/**
+ * Helper: zusätzliche Properties (Tags) als additionalProperty
+ */
+function mits_build_additional_properties($productId): array
+{
+    if (
+      !defined('TABLE_PRODUCTS_TAGS') ||
+      !defined('TABLE_PRODUCTS_TAGS_OPTIONS') ||
+      !defined('TABLE_PRODUCTS_TAGS_VALUES') ||
+      !defined('ADD_TAGS_SELECT')
+    ) {
+        return [];
+    }
+
+    $sql = "
+        SELECT " . ADD_TAGS_SELECT . "
+               pto.options_id,
+               pto.options_name,
+               pto.options_description,
+               pto.sort_order AS options_sort_order,
+               pto.options_content_group,
+               ptv.values_id,
+               ptv.values_name,
+               ptv.values_description,
+               ptv.sort_order AS values_sort_order,
+               ptv.values_image,
+               ptv.values_content_group
+          FROM " . TABLE_PRODUCTS_TAGS . " pt
+          JOIN " . TABLE_PRODUCTS_TAGS_OPTIONS . " pto
+               ON pt.options_id = pto.options_id
+              AND pto.status = '1'
+              AND pto.languages_id = '" . (int)$_SESSION['languages_id'] . "'
+          JOIN " . TABLE_PRODUCTS_TAGS_VALUES . " ptv
+               ON ptv.values_id = pt.values_id
+              AND ptv.status = '1'
+              AND ptv.languages_id = '" . (int)$_SESSION['languages_id'] . "'
+         WHERE pt.products_id = '" . (int)$productId . "'
+      ORDER BY pt.sort_order,
+               pt.options_id,
+               pto.sort_order,
+               pto.options_name,
+               ptv.sort_order,
+               ptv.values_name
+    ";
+
+    $tags_query = xtDBquery($sql);
+    if (xtc_db_num_rows($tags_query, true) <= 0) {
+        return [];
+    }
+
+    $tags_content = [];
+    while ($row = xtc_db_fetch_array($tags_query, true)) {
+        if (!isset($tags_content[$row['options_id']])) {
+            $tags_content[$row['options_id']] = [
+              'OPTIONS_NAME'        => $row['options_name'],
+              'OPTIONS_ID'          => $row['options_id'],
+              'OPTIONS_SORT_ORDER'  => $row['options_sort_order'],
+              'OPTIONS_DESCRIPTION' => $row['options_description'],
+              'DATA'                => [],
+            ];
+        }
+
+        $tags_content[$row['options_id']]['DATA'][] = [
+          'VALUES_NAME'        => $row['values_name'],
+          'VALUES_ID'          => $row['values_id'],
+          'VALUES_SORT_ORDER'  => $row['values_sort_order'],
+          'VALUES_DESCRIPTION' => $row['values_description'],
+        ];
+    }
+
+    $additional = [];
+    foreach ($tags_content as $tag_option) {
+        $value = null;
+
+        if (count($tag_option['DATA']) > 1) {
+            $value = [];
+            foreach ($tag_option['DATA'] as $tag_value) {
+                $value[] = $tag_value['VALUES_NAME'];
+            }
+        } elseif (!empty($tag_option['DATA'][0]['VALUES_NAME'])) {
+            $value = $tag_option['DATA'][0]['VALUES_NAME'];
+        }
+
+        if ($value === null) {
+            continue;
+        }
+
+        $entry = [
+          '@type' => 'PropertyValue',
+          'name'  => $tag_option['OPTIONS_NAME'],
+          'value' => $value,
+        ];
+
+        if (!empty($tag_option['OPTIONS_DESCRIPTION'])) {
+            $entry['description'] = preg_replace(
+              "/\n+/",
+              "\n",
+              strip_tags($tag_option['OPTIONS_DESCRIPTION'])
+            );
+        }
+
+        $additional[] = $entry;
+    }
+
+    return $additional;
+}
+
+/**
+ * Helper: Varianten-/Offer-Erzeugung (inkl. AggregateOffer)
+ *
+ * Nutzt deinen experimentellen Code als Basis,
+ * aber strukturiert und etwas bereinigt.
+ */
+function mits_build_offers_for_product(array $productDataArray, $product): array
+{
+    global $xtPrice;
+
+    $offers = [];
+    $currency = $_SESSION['currency'] ?? $xtPrice->actualCurr ?? 'EUR';
+    $productId = $product->data['products_id'];
+
+    // Fallbacks
+    $basePricePlain = $productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_PLAIN'] ?? $product->data['products_price'];
+    $baseQuantity = $productDataArray['PRODUCTS_QUANTITY'] ?? $product->data['products_quantity'];
+
+    $hasAttributes = method_exists($product, 'getAttributesCount') && $product->getAttributesCount() > 0;
+
+    $_addup_vpes = false; // aus deinem Code übernommen
+    $n_o = 0;
+
+    if ($hasAttributes) {
+        // Attribute laden
+        $attributes_to_options = [];
+        $attributes = [];
+
+        $attr_sql = "
+            SELECT pa.*, pav.products_options_values_name
+              FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa,
+                   " . TABLE_PRODUCTS_OPTIONS_VALUES . " pav
+             WHERE pa.products_id = " . (int)$productId . "
+               AND pav.products_options_values_id = pa.options_values_id
+               AND pav.language_id = " . (int)$_SESSION['languages_id'] . "
+          ORDER BY options_id, sortorder
+        ";
+        $attributes_query = xtDBquery($attr_sql);
+
+        while ($row = xtc_db_fetch_array($attributes_query, true)) {
+            if (!array_key_exists($row['options_id'], $attributes_to_options)) {
+                $attributes_to_options[$row['options_id']] = [];
+            }
+            $attributes_to_options[$row['options_id']][] = $row['products_attributes_id'];
+            $attributes[$row['products_attributes_id']] = $row;
+        }
+
+        if (!empty($attributes_to_options)) {
+            $combiner = new MITS_CombineAttributes($attributes_to_options);
+            $combined_attributes = $combiner->getCombinedAttributes();
+
+            foreach ($combined_attributes as $attribute_combination) {
+                $var_amount = $baseQuantity;
+                $var_price = $basePricePlain;
+                $var_vpe_value = $product->data['products_vpe_value'];
+                $pdif = 0;
+
+                $used_options = [];
+                $options_names = [];
+                $options_models = [];
+
+                $i_count = 0;
+                $overwrite_products_data = [
+                  'products_ean' => $product->data['products_ean'] ?? ''
+                ];
+
+                foreach ($attribute_combination as $attr_key) {
+                    $attribute_data = $attributes[$attr_key];
+
+                    $used_options[$attribute_data['options_id']] = $attribute_data['options_values_id'];
+
+                    if (!empty($attribute_data['products_options_values_name'])) {
+                        $options_names[] = $attribute_data['products_options_values_name'];
+                    }
+                    if (!empty($attribute_data['attributes_model'])) {
+                        $options_models[] = $attribute_data['attributes_model'];
+                    }
+
+                    // Menge (Stock)
+                    if ($i_count == 0) {
+                        $var_amount = $attribute_data['attributes_stock'];
+                    } else {
+                        $var_amount = min($var_amount, $attribute_data['attributes_stock']);
+                    }
+
+                    // Preis
+                    if (!empty($attribute_data['options_values_price'])) {
+                        $values_price = $xtPrice->xtcFormat(
+                          $attribute_data['options_values_price'],
+                          false,
+                          $product->data['products_tax_class_id']
+                        );
+
+                        switch ($attribute_data['price_prefix']) {
+                            case '-':
+                                $pdif += $values_price;
+                                break;
+                            case '=':
+                                $var_price = $values_price;
+                                break;
+                            default:
+                                $pdif -= $values_price;
+                        }
+                    }
+
+                    if ($product->data['products_discount'] != 0 && $_SESSION['customers_status']['customers_status_discount_attributes']) {
+                        $var_price = $var_price + ($pdif * (100 - $product->data['products_discount']) / 100);
+                    } else {
+                        $var_price = $var_price - $pdif;
+                    }
+
+                    // EAN überschreiben
+                    if (!empty($attribute_data['attributes_ean'])) {
+                        $overwrite_products_data['products_ean'] = $attribute_data['attributes_ean'];
+                    }
+
+                    // VPE
+                    if ($attribute_data['attributes_vpe_value'] != 0) {
+                        if ($_addup_vpes) {
+                            switch ($attribute_data['weight_prefix']) {
+                                case '-':
+                                    $var_vpe_value -= $attribute_data['attributes_vpe_value'];
+                                    break;
+                                case '=':
+                                    $var_vpe_value = $attribute_data['attributes_vpe_value'];
+                                    break;
+                                default:
+                                    $var_vpe_value += $attribute_data['attributes_vpe_value'];
+                            }
+                        } else {
+                            $var_vpe_value = $attribute_data['attributes_vpe_value'];
+                        }
+                    }
+
+                    $i_count++;
+                }
+
+                // Verfügbarkeit
+                $quantity = $var_amount;
+                if (count($attribute_combination) == 1 && empty($attribute_data['attributes_ean'])) {
+                    $quantity = $product->data['products_quantity'];
+                }
+                if ($quantity < 0) {
+                    $quantity = 0;
+                }
+
+                // PRID für Link
+                $prid = $product->data['products_id'];
+                if (!empty($used_options)) {
+                    $attr = [];
+                    foreach ($used_options as $key => $value) {
+                        $attr[] = '{' . $key . '}' . $value;
+                    }
+                    if (!empty($attr)) {
+                        $prid .= implode('', $attr);
+                    }
+                }
+
+                // Offer zusammenbauen
+                $offer = [
+                  '@type'         => 'Offer',
+                  'name'          => $productDataArray['PRODUCTS_NAME'] ?? $product->data['products_name'],
+                  'sku'           => $productDataArray['PRODUCTS_MODEL'] ?? $product->data['products_model'],
+                  'url'           => xtc_href_link(
+                    FILENAME_PRODUCT_INFO,
+                    xtc_product_link($prid),
+                    'NONSSL',
+                    false,
+                    empty($used_options)
+                  ),
+                  'priceCurrency' => $currency,
+                  'price'         => round($var_price, 2),
+                  'itemCondition' => 'https://schema.org/NewCondition',
+                  'availability'  => ($quantity <= 0 && STOCK_CHECK == 'true')
+                    ? 'https://schema.org/OutOfStock'
+                    : 'https://schema.org/InStock',
+                  'seller'        => [
+                    '@type' => 'Organization',
+                    'name'  => defined('META_COMPANY') ? META_COMPANY : (defined('STORE_NAME') ? STORE_NAME : '')
+                  ],
+                ];
+
+                if (!empty($options_names)) {
+                    $offer['name'] .= ' ' . implode(' ', $options_names);
+                }
+                if (!empty($options_models)) {
+                    $offer['sku'] .= '-' . implode('-', $options_models);
+                }
+
+                // priceSpecification
+                $price_spec = [];
+                $price_spec[] = [
+                  '@type'                 => 'UnitPriceSpecification',
+                  'price'                 => round($var_price, 2),
+                  'priceCurrency'         => $currency,
+                  'valueAddedTaxIncluded' => true,
+                  'priceType'             => 'https://schema.org/RegularPrice',
+                ];
+
+                if ($product->data['products_vpe_status'] && $var_vpe_value != 0.0 && $var_price > 0) {
+                    $unitName = xtc_get_vpe_name($product->data['products_vpe']);
+                    $pricePerVpe = $var_price * (1 / $var_vpe_value);
+
+                    $price_spec[] = [
+                      '@type'                 => 'UnitPriceSpecification',
+                      'price'                 => round($var_price, 2),
+                      'priceCurrency'         => $currency,
+                      'valueAddedTaxIncluded' => true,
+                      'referenceQuantity'     => [
+                        '@type'    => 'QuantitativeValue',
+                        'value'    => 1,
+                        'unitText' => $unitName,
+                      ],
+                      'description'           => $xtPrice->xtcFormat($pricePerVpe, true) . TXT_PER . $unitName,
+                    ];
+
+                    $offer['eligibleQuantity'] = [
+                      '@type'    => 'QuantitativeValue',
+                      'value'    => $var_vpe_value,
+                      'unitText' => $unitName,
+                    ];
+                }
+
+                $offer['priceSpecification'] = $price_spec;
+
+                $offers[] = $offer;
+                $n_o++;
+            }
+        }
+    } else {
+        // Einfaches Produkt ohne Attribute
+        $offer = [
+          '@type'         => 'Offer',
+          'sku'           => $productDataArray['PRODUCTS_MODEL'] ?? $product->data['products_model'],
+          'url'           => $productDataArray['PRODUCTS_LINK']
+            ?? xtc_href_link(FILENAME_PRODUCT_INFO, xtc_product_link($productId)),
+          'priceCurrency' => $currency,
+          'price'         => round($basePricePlain, 2),
+          'itemCondition' => 'https://schema.org/NewCondition',
+          'availability'  => ($baseQuantity <= 0 && STOCK_CHECK == 'true')
+            ? 'https://schema.org/OutOfStock'
+            : 'https://schema.org/InStock',
+          'seller'        => [
+            '@type' => 'Organization',
+            'name'  => defined('META_COMPANY') ? META_COMPANY : (defined('STORE_NAME') ? STORE_NAME : '')
+          ],
+        ];
+
+        if (!empty($productDataArray['PRODUCTS_MANUFACTURERS_MODEL'])) {
+            $offer['mpn'] = $productDataArray['PRODUCTS_MANUFACTURERS_MODEL'];
+        }
+
+        $price_spec = [];
+
+        // Sonderpreis?
+        $flag = strtolower($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'] ?? '');
+        $isSpecial = (strpos($flag, 'special') !== false);
+
+        if ($isSpecial) {
+            $oldPlain = $productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_OLD_PRICE_PLAIN'] ?? $basePricePlain;
+
+            $price_spec[] = [
+              '@type'                 => 'UnitPriceSpecification',
+              'price'                 => round($oldPlain, 2),
+              'priceCurrency'         => $currency,
+              'valueAddedTaxIncluded' => true,
+              'priceType'             => 'https://schema.org/StrikethroughPrice',
+            ];
+            $specCurrent = [
+              '@type'                 => 'UnitPriceSpecification',
+              'price'                 => round($basePricePlain, 2),
+              'priceCurrency'         => $currency,
+              'valueAddedTaxIncluded' => true,
+              'priceType'             => 'https://schema.org/RegularPrice',
+            ];
+
+            if (!empty($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_EXPIRES_DATE'])) {
+                $specCurrent['validThrough'] = date(
+                  'Y-m-d',
+                  strtotime($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_EXPIRES_DATE'])
+                );
+                $offer['priceValidUntil'] = $specCurrent['validThrough'];
+            }
+
+            $price_spec[] = $specCurrent;
+        } else {
+            $price_spec[] = [
+              '@type'                 => 'UnitPriceSpecification',
+              'price'                 => round($basePricePlain, 2),
+              'priceCurrency'         => $currency,
+              'valueAddedTaxIncluded' => true,
+              'priceType'             => 'https://schema.org/RegularPrice',
+            ];
+        }
+
+        // VPE
+        if ($product->data['products_vpe_status'] && $product->data['products_vpe_value'] != 0.0 && $basePricePlain > 0) {
+            $unitName = xtc_get_vpe_name($product->data['products_vpe']);
+            $pricePerVpe = $basePricePlain * (1 / $product->data['products_vpe_value']);
+
+            $price_spec[] = [
+              '@type'                 => 'UnitPriceSpecification',
+              'price'                 => round($basePricePlain, 2),
+              'priceCurrency'         => $currency,
+              'valueAddedTaxIncluded' => true,
+              'referenceQuantity'     => [
+                '@type'    => 'QuantitativeValue',
+                'value'    => 1,
+                'unitText' => $unitName,
+              ],
+              'description'           => $xtPrice->xtcFormat($pricePerVpe, true) . TXT_PER . $unitName,
+            ];
+
+            $offer['eligibleQuantity'] = [
+              '@type'    => 'QuantitativeValue',
+              'value'    => $product->data['products_vpe_value'],
+              'unitText' => $unitName,
+            ];
+        }
+
+        $offer['priceSpecification'] = $price_spec;
+        $offers[] = $offer;
+    }
+
+    // AggregateOffer / Offer entscheiden
+    if (count($offers) > 1) {
+        $prices = array_column($offers, 'price');
+
+        return [
+          'offers' => [
+            '@type'         => 'AggregateOffer',
+            'priceCurrency' => $currency,
+            'lowPrice'      => round(min($prices), 2),
+            'highPrice'     => round(max($prices), 2),
+            'offerCount'    => count($offers),
+            'offers'        => $offers,
+          ]
+        ];
+    }
+
+    return [
+      'offers' => $offers[0]
+    ];
+}
+
+/* --------------------------------------------------------------------
+ * AB HIER: Ausgabe der JSON-LD Blöcke
+ * ------------------------------------------------------------------*/
+
+$logo = mits_get_logo();
+
+/* WebSite */
+if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
+    $webSite = [
+      '@context'      => 'https://schema.org',
+      '@type'         => 'WebSite',
+      'name'          => mits_ml(MODULE_MITS_JSON_LD_NAME),
+      'alternateName' => mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME),
+      'description'   => mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION),
+      'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+    ];
+
+    if ($logo) {
+        $webSite['image'] = $logo;
+    }
+
+    if (mits_flag('MODULE_MITS_JSON_LD_SHOW_SEARCHFIELD')) {
+        $webSite['potentialAction'] = [
+          '@type'       => 'SearchAction',
+          'target'      => xtc_href_link(FILENAME_ADVANCED_SEARCH_RESULT, '', $request_type, false) . '?keywords={search_term_string}',
+          'query-input' => 'required name=search_term_string',
+        ];
+    }
+
+    mits_output_json($webSite);
+}
+
+/* Organization */
+if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
+    global $lng;
+
+    $org = [
+      '@context'      => 'https://schema.org',
+      '@type'         => 'Organization',
+      '@id'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      'name'          => mits_ml(MODULE_MITS_JSON_LD_NAME),
+      'alternateName' => mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME),
+      'description'   => mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION),
+      'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+    ];
+
+    if ($logo) {
+        $org['logo'] = $logo;
+        $org['image'] = $logo;
+    }
+
+    // Kontaktpunkte
+    if (mits_flag('MODULE_MITS_JSON_LD_SHOW_CONTACT') && isset($lng->catalog_languages)) {
+        $langs = array_map(fn($x) => $x['name'], $lng->catalog_languages);
+        $contacts = [];
+
+        $map = [
+          'MODULE_MITS_JSON_LD_TELEPHONE_SERVICE'   => 'customer service',
+          'MODULE_MITS_JSON_LD_TELEPHONE_TECHNICAL' => 'technical support',
+          'MODULE_MITS_JSON_LD_TELEPHONE_BILLING'   => 'billing support',
+          'MODULE_MITS_JSON_LD_TELEPHONE_SALES'     => 'sales',
+        ];
+
+        foreach ($map as $const => $type) {
+            if (defined($const) && !empty(constant($const))) {
+                $contacts[] = [
+                  '@type'             => 'ContactPoint',
+                  'telephone'         => mits_ml(constant($const)),
+                  'contactType'       => $type,
+                  'areaServed'        => strtoupper($_SESSION['language_code']),
+                  'availableLanguage' => $langs,
+                ];
+            }
+        }
+
+        if (defined('MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT') && !empty(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)) {
+            $contacts[] = [
+              '@type'       => 'ContactPoint',
+              'telephone'   => mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT),
+              'contactType' => 'customer service',
+            ];
+        }
+
+        if (!empty($contacts)) {
+            $org['contactPoint'] = $contacts;
+        }
+    }
+
+    // Social
+    if (defined('MODULE_MITS_JSON_LD_SOCIAL_MEDIA') && !empty(MODULE_MITS_JSON_LD_SOCIAL_MEDIA)) {
+        $org['sameAs'] = array_map('trim', explode(',', MODULE_MITS_JSON_LD_SOCIAL_MEDIA));
+    }
+
+    mits_output_json($org);
+}
+
+/* LocalBusiness */
+if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
+    $loc = [
+      '@context'  => 'https://schema.org',
+      '@type'     => 'LocalBusiness',
+      'name'      => mits_ml(MODULE_MITS_JSON_LD_NAME),
+      '@id'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      'url'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      'telephone' => mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT),
+      'address'   => [
+        '@type'           => 'PostalAddress',
+        'streetAddress'   => mits_ml(MODULE_MITS_JSON_LD_LOCATION_STREETADDRESS),
+        'addressLocality' => mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSLOCALITY),
+        'postalCode'      => mits_ml(MODULE_MITS_JSON_LD_LOCATION_POSTALCODE),
+        'addressCountry'  => mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSCOUNTRY),
+      ],
+    ];
+
+    if ($logo) {
+        $loc['image'] = $logo;
+    }
+
+    if (!empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE) && !empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE)) {
+        $loc['geo'] = [
+          '@type'     => 'GeoCoordinates',
+          'latitude'  => mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE),
+          'longitude' => mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE),
+        ];
+    }
+
+    if (defined('MODULE_MITS_JSON_LD_SOCIAL_MEDIA') && !empty(MODULE_MITS_JSON_LD_SOCIAL_MEDIA)) {
+        $loc['sameAs'] = array_map('trim', explode(',', MODULE_MITS_JSON_LD_SOCIAL_MEDIA));
+    }
+
+    mits_output_json($loc);
+}
+
+/* Breadcrumb */
+if (mits_flag('MODULE_MITS_JSON_LD_SHOW_BREADCRUMB') && isset($breadcrumb)) {
+    $items = [];
+    foreach ($breadcrumb->_trail as $i => $bc) {
+        $items[] = [
+          '@type'    => 'ListItem',
+          'position' => $i + 1,
+          'name'     => $bc['title'],
+          'item'     => $bc['link'] ?: xtc_href_link(basename($PHP_SELF), xtc_get_all_get_params([], true), $request_type),
+        ];
+    }
+
+    mits_output_json([
+      '@context'        => 'https://schema.org',
+      '@type'           => 'BreadcrumbList',
+      'itemListElement' => $items,
+    ]);
+}
+
+/* Produkt + Varianten + Tags */
+if (
+  basename($PHP_SELF) == FILENAME_PRODUCT_INFO &&
+  isset($product) && is_object($product) && $product->isProduct() &&
+  mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT')
+) {
+    global $manufacturer, $productDataArray;
+
+    // Bilder
+    $productImages = [];
+    if (!empty($product->data['products_image'])) {
+        $productImages[] = xtc_href_link($product->productImage($product->data['products_image'], 'info'));
+        $mo = xtc_get_products_mo_images($product->data['products_id']);
+        if ($mo) {
+            foreach ($mo as $m) {
+                $productImages[] = xtc_href_link($product->productImage($m['image_name'], 'info'));
+            }
+        }
+    }
+
+    // Beschreibung
+    $desc = strip_tags($product->data['products_description']);
+    $desc = html_entity_decode($desc, ENT_NOQUOTES, $_SESSION['language_charset']);
+
+    // Basis-Product-Schema
+    $schema = [
+      '@context'    => 'https://schema.org',
+      '@type'       => 'Product',
+      'id'          => $product->data['products_id'],
+      'sku'         => $product->data['products_model'] ?: $product->data['products_id'],
+      'gtin13'      => $product->data['products_ean'],
+      'mpn'         => $product->data['products_manufacturers_model'],
+      'image'       => $productImages,
+      'name'        => $product->data['products_name'],
+      'description' => $desc,
+    ];
+
+    // Hersteller
+    if (isset($manufacturer['manufacturers_name']) && $manufacturer['manufacturers_name'] != '') {
+        $schema['brand'] = [
+          '@type' => 'Brand',
+          'name'  => $manufacturer['manufacturers_name'],
+        ];
+    }
+
+    // Tags → additionalProperty
+    $additional = mits_build_additional_properties($product->data['products_id']);
+    if (!empty($additional)) {
+        $schema['additionalProperty'] = $additional;
+    }
+
+    // Reviews (aggregiert)
+    $reviewsCount = $product->getReviewsCount($product->data['products_id']);
+    if (
+      mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT_REVIEWS') &&
+      $_SESSION['customers_status']['customers_status_read_reviews'] == '1' &&
+      $reviewsCount > 0
+    ) {
+        $schema['aggregateRating'] = [
+          '@type'       => 'AggregateRating',
+          'ratingValue' => $product->getReviewsAverage(),
+          'reviewCount' => $reviewsCount,
+        ];
+
+        $reviewList = $product->getReviews($product->data['products_id']);
+        if ($reviewList) {
+            foreach ($reviewList as $r) {
+                $date = DateTime::createFromFormat('d.m.Y', $r['DATE']);
+                $schema['review'][] = [
+                  '@type'         => 'Review',
+                  'author'        => [
+                    '@type' => 'Person',
+                    'name'  => $r['AUTHOR'],
+                  ],
+                  'datePublished' => $date ? $date->format('Y-m-d') : '',
+                  'reviewBody'    => strip_tags($r['TEXT']),
+                  'reviewRating'  => [
+                    '@type'       => 'Rating',
+                    'ratingValue' => $r['RATING_VOTE'],
+                    'worstRating' => '1',
+                    'bestRating'  => '5',
+                  ],
+                ];
+            }
+        }
+    }
+
+    // Trusted Shops AggregateRating
+    if (
+      defined('MODULE_TS_TRUSTEDSHOPS_ID') &&
+      defined('MODULE_TS_PRODUCT_STICKER_STATUS') &&
+      MODULE_TS_PRODUCT_STICKER_STATUS == '1' &&
+      defined('MODULE_TS_PRODUCT_STICKER') &&
+      MODULE_TS_PRODUCT_STICKER != '' &&
+      !empty($productDataArray['TS_FEED_REVIEW']) &&
+      $productDataArray['TS_FEED_REVIEW'] > 0
+    ) {
+        $schema['aggregateRating'] = [
+          '@type'       => 'AggregateRating',
+          'ratingValue' => $productDataArray['TS_FEED_AGGREGATERATING'],
+          'reviewCount' => $productDataArray['TS_FEED_REVIEW'],
+        ];
+    }
+
+    // Offers (inkl. Varianten / AggregateOffer)
+    $offersBlock = mits_build_offers_for_product($productDataArray ?? [], $product);
+    $schema = array_merge($schema, $offersBlock);
+
+    mits_output_json($schema);
+}
+
+/* Produkt-Bewertungsdetailseite */
+if (
+  basename($PHP_SELF) == FILENAME_PRODUCT_REVIEWS_INFO &&
+  mits_flag('MODULE_MITS_JSON_LD_SHOW_PRODUCT_REVIEWS_INFO') &&
+  isset($reviews) && is_array($reviews) && count($reviews) > 0 &&
+  isset($product) && is_object($product)
+) {
+    $r = $reviews;
+    $count = $product->getReviewsCount($r['products_id']);
+    $date = DateTime::createFromFormat('d.m.Y', $r['date_added']);
+
+    $schema = [
+      '@context'      => 'https://schema.org',
+      '@type'         => 'Review',
+      'reviewRating'  => [
+        '@type'       => 'AggregateRating',
+        'ratingValue' => $r['reviews_rating'],
+        'ratingCount' => $count,
+        'reviewCount' => $count,
+        'worstRating' => '1',
+        'bestRating'  => '5',
+      ],
+      'itemReviewed'  => [
+        '@type' => 'Product',
+        'name'  => $r['products_name'],
+      ],
+      'author'        => [
+        '@type' => 'Person',
+        'name'  => $r['customers_name'],
+      ],
+      'datePublished' => $date ? $date->format('Y-m-d') : $r['date_added'],
+      'reviewBody'    => strip_tags($r['reviews_text']),
+    ];
+
+    mits_output_json($schema);
+}
+
+/* ContactPage */
+if (
+  basename($PHP_SELF) == FILENAME_CONTENT &&
+  isset($_GET['coID']) && (int)$_GET['coID'] === 7 &&
+  mits_flag('MODULE_MITS_JSON_LD_SHOW_CONTACT') &&
+  isset($shop_content_data['content_title'])
+) {
+    $meta_descr = isset($metadata_array['description']) ? $metadata_array['description'] : '';
+
+    $schema = [
+      '@context'    => 'https://schema.org',
+      '@type'       => 'ContactPage',
+      'url'         => xtc_href_link(FILENAME_CONTENT, 'coID=7', 'SSL', false),
+      'name'        => strip_tags($shop_content_data['content_title']),
+      'description' => str_replace(["\r", "\n"], ' ', strip_tags(decode_htmlentities($meta_descr))),
+    ];
+
+    mits_output_json($schema);
+}
