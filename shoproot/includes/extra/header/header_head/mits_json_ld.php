@@ -871,12 +871,7 @@ function mits_build_single_base_offer_without_attributes(
 
     $sellerName = defined('META_COMPANY') ? META_COMPANY : STORE_NAME;
 
-    $offerUrl = xtc_href_link(
-      FILENAME_PRODUCT_INFO,
-      xtc_product_link($product->data['products_id']),
-      'NONSSL',
-      false
-    );
+    $offerUrl = mits_product_url($product->data['products_id']);
 
     $offer = [
       '@type'              => 'Offer',
@@ -920,7 +915,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
       'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
       'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
       'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
-      'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
     if ($logo) {
@@ -930,12 +925,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
     if (mits_flag('MODULE_MITS_JSON_LD_SHOW_SEARCHFIELD')) {
         $webSite['potentialAction'] = [
           '@type'       => 'SearchAction',
-          'target'      => xtc_href_link(
-              FILENAME_ADVANCED_SEARCH_RESULT,
-              '',
-              $request_type,
-              false
-            ) . '?keywords={search_term_string}',
+          'target'      => mits_link(FILENAME_ADVANCED_SEARCH_RESULT) . '?keywords={search_term_string}',
           'query-input' => 'required name=search_term_string',
         ];
     }
@@ -952,11 +942,11 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
 
     $org = [
       '@type'         => 'Organization',
-      '@id'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      '@id'           => mits_link(FILENAME_DEFAULT),
       'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
       'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
       'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
-      'url'           => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
     if ($logo) {
@@ -1015,8 +1005,8 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     $loc = [
       '@type'     => 'LocalBusiness',
       'name'      => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
-      '@id'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
-      'url'       => xtc_href_link(FILENAME_DEFAULT, '', $request_type, false),
+      '@id'       => mits_link(FILENAME_DEFAULT),
+      'url'       => mits_link(FILENAME_DEFAULT),
       'telephone' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)),
       'address'   => [
         '@type'           => 'PostalAddress',
@@ -1082,7 +1072,7 @@ if (
 
     $schema = [
       '@type'       => 'ContactPage',
-      'url'         => xtc_href_link(FILENAME_CONTENT, 'coID=7', 'SSL', false),
+      'url'         => mits_link(FILENAME_CONTENT, 'coID=7', 'SSL'),
       'name'        => mits_jsonld_sanitize($shop_content_data['content_title']),
       'description' => mits_jsonld_sanitize(decode_htmlentities($metaDescr)),
     ];
