@@ -35,8 +35,9 @@ function mits_flag(string $const): bool
  *
  * @return mixed
  */
-function mits_ml(mixed $value): mixed
+function mits_ml(mixed $constant): mixed
 {
+    $value = defined($constant) ? constant($constant) : '';
     return parse_multi_language_value($value, $_SESSION['language_code']);
 }
 
@@ -912,9 +913,9 @@ $logo = mits_get_logo();
 if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
     $webSite = [
       '@type'         => 'WebSite',
-      'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
-      'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
-      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION)),
+      'name'          => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_NAME')),
+      'alternateName' => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_ALTERNATE_NAME')),
+      'description'   => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION')),
       'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
@@ -943,9 +944,9 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
     $org = [
       '@type'         => 'Organization',
       '@id'           => mits_link(FILENAME_DEFAULT),
-      'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
-      'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
-      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION)),
+      'name'          => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_NAME')),
+      'alternateName' => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_ALTERNATE_NAME')),
+      'description'   => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION')),
       'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
@@ -980,7 +981,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
         if (defined('MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT') && !empty(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)) {
             $contacts[] = [
               '@type'       => 'ContactPoint',
-              'telephone'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)),
+              'telephone'   => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT')),
               'contactType' => 'customer service',
             ];
         }
@@ -1004,16 +1005,16 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
 if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     $loc = [
       '@type'     => 'LocalBusiness',
-      'name'      => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
+      'name'      => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_NAME')),
       '@id'       => mits_link(FILENAME_DEFAULT),
       'url'       => mits_link(FILENAME_DEFAULT),
-      'telephone' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT)),
+      'telephone' => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_TELEPHONE_DEFAULT')),
       'address'   => [
         '@type'           => 'PostalAddress',
-        'streetAddress'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_STREETADDRESS)),
-        'addressLocality' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSLOCALITY)),
-        'postalCode'      => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_POSTALCODE)),
-        'addressCountry'  => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_ADDRESSCOUNTRY)),
+        'streetAddress'   => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_STREETADDRESS')),
+        'addressLocality' => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_ADDRESSLOCALITY')),
+        'postalCode'      => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_POSTALCODE')),
+        'addressCountry'  => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_ADDRESSCOUNTRY')),
       ],
     ];
 
@@ -1024,8 +1025,8 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_LOCATION')) {
     if (!empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE) && !empty(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE)) {
         $loc['geo'] = [
           '@type'     => 'GeoCoordinates',
-          'latitude'  => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE)),
-          'longitude' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE)),
+          'latitude'  => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_GEO_LATITUDE')),
+          'longitude' => mits_jsonld_sanitize(mits_ml('MODULE_MITS_JSON_LD_LOCATION_GEO_LONGITUDE')),
         ];
     }
 
@@ -1093,19 +1094,40 @@ if (
 ) {
     global $manufacturer, $productDataArray, $xtPrice;
 
-    $productImages = [];
+    $productImagesSchema = array();
 
-    if (!empty($product->data['products_image'])) {
-        $productImages[] = $product->productImage($product->data['products_image'], 'info');
+    if ($product->data['products_image'] != '') {
+        $main_img_url = $product->productImage($product->data['products_image'], 'info');
+        if ($main_img_url) {
+            $productImagesSchema[] = [
+              '@type' => 'ImageObject',
+              'url'   => $main_img_url,
+              'caption' => mits_jsonld_sanitize($product->data['products_name']),
+            ];
+        }
+    }
 
-        $mo = xtc_get_products_mo_images($product->data['products_id']);
-
-        if ($mo) {
-            foreach ($mo as $m) {
-                $productImages[] = $product->productImage($m['image_name'], 'info');
+    $mo_images = xtc_get_products_mo_images($product->data['products_id']);
+    if ($mo_images !== false) {
+        foreach ($mo_images as $img) {
+            $mo_img_url = $product->productImage($img['image_name'], 'info');
+            $alt_text = $img['image_alt'] ?? '';
+            $title_text = $img['image_title'] ?? '';
+            $caption_value = $alt_text ?: $title_text;
+            $description_value = $caption_value ? $title_text : '';
+            if ($mo_img_url != '') {
+                $image_object = [
+                  '@type'    => 'ImageObject',
+                  'url'      => $mo_img_url,
+                  'caption'  => mits_jsonld_sanitize($caption_value),
+                  'description' => mits_jsonld_sanitize($description_value),
+                ];
+                $productImagesSchema[] = $image_object;
             }
         }
     }
+
+    $productImagesSchema = empty($productImagesSchema) ? null : $productImagesSchema;
 
     $productURL = mits_product_url($product->data['products_id']);
 
@@ -1123,7 +1145,7 @@ if (
       ),
       'gtin13'           => mits_jsonld_sanitize($product->data['products_ean']),
       'mpn'              => mits_jsonld_sanitize($product->data['products_manufacturers_model']),
-      'image'            => $productImages,
+      'image'            => $productImagesSchema,
       'name'             => mits_jsonld_sanitize($product->data['products_name']),
       'description'      => mits_jsonld_sanitize($product->data['products_description']),
     ];
