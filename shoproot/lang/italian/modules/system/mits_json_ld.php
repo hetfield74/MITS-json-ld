@@ -59,6 +59,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Numero massimo di offerte',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Previene problemi di memoria in caso di molti attributi. Predefinito: 100.',
 
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Attivare la correzione Microdata?',
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Rimuove gli attributi Microdata dal negozio utilizzando jQuery, nel caso in cui lo schema Microdata sia ancora presente nel template in uso. I dati strutturati duplicati (JSON-LD e Microdata) non sono l\'ideale in quanto possono portare a incongruenze.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Attivare le recensioni dei prodotti?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Attivare il markup JSON-LD per le recensioni nella pagina prodotto? Solo insieme al markup del prodotto.',
 
@@ -92,8 +95,8 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ALTERNATE_NAME_TITLE' => 'Nome alternativo azienda / sito web',
   'MODULE_' . $modulname . '_ALTERNATE_NAME_DESC'  => 'Il nome alternativo viene utilizzato nei markup WebSite, Organization e LocalBusiness.',
 
-  'MODULE_' . $modulname . '_DESCRIPTION_TITLE' => 'Descrizione azienda / sito web',
-  'MODULE_' . $modulname . '_DESCRIPTION_DESC'  => 'Utilizzata in WebSite, Organization e LocalBusiness. Se vuota, viene usata la meta-description standard.',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_TITLE' => 'Descrizione azienda / sito web',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_DESC'  => 'Utilizzata in WebSite, Organization e LocalBusiness. Se vuota, viene usata la meta-description standard.',
 
   'MODULE_' . $modulname . '_EMAIL_TITLE' => 'Indirizzo e-mail azienda / sito web',
   'MODULE_' . $modulname . '_EMAIL_DESC'  => 'Utilizzato nei markup WebSite, Organization e LocalBusiness.',

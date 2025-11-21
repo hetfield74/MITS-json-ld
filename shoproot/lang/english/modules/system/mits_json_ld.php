@@ -58,6 +58,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Max. number of offers',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Prevents memory issues with many attributes. Default: 100.',
 
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Activate Microdata Fix?',
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Removes the Microdata attributes from the shop using jQuery, in case the Microdata schema is still present in the template used. Duplicate structured data (JSON-LD and Microdata) is not ideal as it can lead to inconsistencies.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Activate reviews for products?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activate JSON-LD markup for reviews on the product detail page? Only effective when product markup is activated.',
 
@@ -91,8 +94,8 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ALTERNATE_NAME_TITLE' => 'Alternative name of company/website',
   'MODULE_' . $modulname . '_ALTERNATE_NAME_DESC'  => 'The alternative name is used in WebSite, Organization and LocalBusiness markups.',
 
-  'MODULE_' . $modulname . '_DESCRIPTION_TITLE' => 'Description of company/website',
-  'MODULE_' . $modulname . '_DESCRIPTION_DESC'  => 'The description is used in WebSite, Organization and LocalBusiness markups. If empty, the standard meta description is used.',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_TITLE' => 'Description of company/website',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_DESC'  => 'The description is used in WebSite, Organization and LocalBusiness markups. If empty, the standard meta description is used.',
 
   'MODULE_' . $modulname . '_EMAIL_TITLE' => 'Company/website email address',
   'MODULE_' . $modulname . '_EMAIL_DESC'  => 'This email address is used in WebSite, Organization and LocalBusiness markups.',

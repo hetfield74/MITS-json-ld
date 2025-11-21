@@ -58,6 +58,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Max. Anzahl Offers',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Verhindert Memory-Probleme bei vielen Attributen. Default: 100.',
 
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Microdata Fix aktivieren?',
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => 'Entfernt mittels jQuery die Microdata-Attribute aus dem Shop, falls das Microdata-Schema noch im verwendeten Template vorhanden ist. Die doppelten strukturierten Daten (JSON-LD und Microdata) sind nicht ideal, da sie zu Inkonsistenzen f&uuml;hren k&ouml;nnen.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Bewertungen bei Produkten aktivieren?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON-LD Markup f&uuml;r die Bewertungen auf der Produktdetailseite aktivieren? Nur in Kombination mit dem der Nutzung des Markups f&uuml;r das Produkt.',
 
@@ -91,8 +94,8 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ALTERNATE_NAME_TITLE' => 'Alternativer Name der Firma/Webseite',
   'MODULE_' . $modulname . '_ALTERNATE_NAME_DESC'  => 'Der alternative Name wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet.',
 
-  'MODULE_' . $modulname . '_DESCRIPTION_TITLE' => 'Beschreibung der Firma/Webseite',
-  'MODULE_' . $modulname . '_DESCRIPTION_DESC'  => 'Die Beschreibung wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet. Wenn Sie dieses Feld nicht ausf&uuml;llen, dann wird die Standard Meta Description verwendet.',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_TITLE' => 'Beschreibung der Firma/Webseite',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_DESC'  => 'Die Beschreibung wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet. Wenn Sie dieses Feld nicht ausf&uuml;llen, dann wird die Standard Meta Description verwendet.',
 
   'MODULE_' . $modulname . '_EMAIL_TITLE' => 'E-Mail-Adresse der Firma/Webseite',
   'MODULE_' . $modulname . '_EMAIL_DESC'  => 'Die Beschreibung wird bei den Markups f&uuml;r WebSite, Organization und LocalBusiness verwendet.',

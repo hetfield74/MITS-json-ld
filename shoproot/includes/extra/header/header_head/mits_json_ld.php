@@ -914,7 +914,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_WEBSITE')) {
       '@type'         => 'WebSite',
       'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
       'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
-      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
+      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION)),
       'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
@@ -945,7 +945,7 @@ if (mits_flag('MODULE_MITS_JSON_LD_SHOW_ORGANISTATION')) {
       '@id'           => mits_link(FILENAME_DEFAULT),
       'name'          => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_NAME)),
       'alternateName' => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_ALTERNATE_NAME)),
-      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_DESCRIPTION)),
+      'description'   => mits_jsonld_sanitize(mits_ml(MODULE_MITS_JSON_LD_WEBSITE_DESCRIPTION)),
       'url'           => mits_link(FILENAME_DEFAULT),
     ];
 
@@ -1200,6 +1200,10 @@ if (
     $offersBlock      = mits_build_offers_for_product($product, $productDataArray);
     $schema['offers'] = $offersBlock;
 
+    if (isset($structuredFAQDataforJSON) && is_array($structuredFAQDataforJSON)) {
+        $schema['mainEntity'] = $structuredFAQDataforJSON;
+    }
+
     $schema = mits_jsonld_clean($schema);
     mits_graph_add($schema);
 }
@@ -1244,6 +1248,11 @@ if (
 
     $schema = mits_jsonld_clean($schema);
     mits_graph_add($schema);
+}
+
+if (isset($structuredFAQPageDataForJSON) && is_array($structuredFAQPageDataForJSON)) {
+    $structuredFAQPageDataForJSON = mits_jsonld_clean($structuredFAQPageDataForJSON);
+    mits_graph_add($structuredFAQPageDataForJSON);
 }
 
 mits_graph_output();

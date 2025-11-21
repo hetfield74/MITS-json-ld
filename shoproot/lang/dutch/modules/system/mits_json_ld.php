@@ -59,6 +59,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_MAX_OFFERS_TITLE' => 'Maximaal aantal Offers',
   'MODULE_' . $modulname . '_MAX_OFFERS_DESC'  => 'Voorkomt geheugenproblemen bij veel attributen. Standaard: 100.',
 
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Microdata Fix activeren?',
+  'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Verwijdert met behulp van jQuery de Microdata-attributen uit de shop, voor het geval dat het Microdata-schema nog steeds aanwezig is in de gebruikte template. Dubbele gestructureerde gegevens (JSON-LD en Microdata) zijn niet ideaal omdat ze tot inconsistenties kunnen leiden.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Productreviews activeren?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON-LD-markering voor reviews op de productdetailpagina activeren? Alleen in combinatie met productmarkering.',
 
@@ -92,8 +95,8 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ALTERNATE_NAME_TITLE' => 'Alternatieve naam van het bedrijf/website',
   'MODULE_' . $modulname . '_ALTERNATE_NAME_DESC'  => 'Wordt gebruikt voor WebSite, Organization en LocalBusiness.',
 
-  'MODULE_' . $modulname . '_DESCRIPTION_TITLE' => 'Beschrijving van het bedrijf/website',
-  'MODULE_' . $modulname . '_DESCRIPTION_DESC'  => 'Wordt gebruikt voor WebSite, Organization en LocalBusiness. Indien leeg, wordt de standaard meta-description gebruikt.',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_TITLE' => 'Beschrijving van het bedrijf/website',
+  'MODULE_' . $modulname . '_WEBSITE_DESCRIPTION_DESC'  => 'Wordt gebruikt voor WebSite, Organization en LocalBusiness. Indien leeg, wordt de standaard meta-description gebruikt.',
 
   'MODULE_' . $modulname . '_EMAIL_TITLE' => 'E-mailadres van het bedrijf/website',
   'MODULE_' . $modulname . '_EMAIL_DESC'  => 'Wordt gebruikt voor WebSite, Organization en LocalBusiness.',
