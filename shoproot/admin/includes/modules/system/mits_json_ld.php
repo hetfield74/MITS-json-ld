@@ -295,7 +295,6 @@ class mits_json_ld
           DIR_FS_DOCUMENT_ROOT . (defined('DIR_ADMIN') ? DIR_ADMIN : 'admin/') . 'includes/modules/system/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/english/modules/system/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/german/modules/system/' . $this->code . '.php',
-          DIR_FS_DOCUMENT_ROOT . 'images/merz-it-service.png',
           DIR_FS_DOCUMENT_ROOT . 'includes/extra/header/header_head/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'includes/extra/application_bottom/' . $this->code . '.php',
         );
