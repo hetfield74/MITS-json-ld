@@ -25,7 +25,7 @@ class mits_json_ld
     public mixed $do_update;
     public bool $enabled;
     private bool $_check;
-    private string $default_colums;
+    private string $default_columns;
 
     /**
      *
@@ -34,11 +34,11 @@ class mits_json_ld
     {
         $this->code = 'mits_json_ld';
         $this->name = 'MODULE_' . strtoupper($this->code);
-        $this->version = '1.1.1';
-        $this->default_colums = 'configuration_key, configuration_value, configuration_group_id, sort_order, set_function';
+        $this->version = '1.1.2';
 
         $this->sort_order = defined($this->name . '_SORT_ORDER') ? constant($this->name . '_SORT_ORDER') : 0;
         $this->enabled = defined($this->name . '_STATUS') && (constant($this->name . '_STATUS') == 'true');
+        $this->default_columns = 'configuration_key, configuration_value, configuration_group_id, sort_order, set_function';
 
         if (defined($this->name . '_VERSION') && $this->version != constant($this->name . '_VERSION')) {
             $this->do_update = (defined($this->name . '_UPDATE_AVAILABLE_TITLE')) ? constant($this->name . '_UPDATE_AVAILABLE_TITLE') : '';
@@ -104,44 +104,44 @@ class mits_json_ld
         $country_query = xtc_db_query("SELECT countries_iso_code_2 FROM " . TABLE_COUNTRIES . " WHERE countries_id = " . (int)STORE_COUNTRY);
         $country = xtc_db_fetch_array($country_query);
 
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_STATUS', 'false', 6, 1, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_BREADCRUMB', 'false', 6, 2, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT', 'false', 6, 3, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_STATUS', 'false', 6, 1, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_BREADCRUMB', 'false', 6, 2, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT', 'false', 6, 3, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
 
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_ATTRIBUTES', 'true', 6, 4, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_MAX_OFFERS', '100', 6, 5, NULL, now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_TAGS', 'true', 6, 6, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_MICRODATA_FIX', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_ATTRIBUTES', 'true', 6, 4, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_MAX_OFFERS', '100', 6, 5, NULL, now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_TAGS', 'true', 6, 6, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_MICRODATA_FIX', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
 
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS', 'false', 6, 8, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS_INFO', 'true', 6, 9, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_SEARCHFIELD', 'true', 6, 10, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_WEBSITE', 'true', 6, 11, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_LOGO', 'true', 6, 12, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_LOGOFILE', 'logo.gif', 6, 13, NULL, now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_ORGANISTATION', 'true', 6, 14, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_CONTACT', 'true', 6, 15, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SHOW_LOCATION', 'false', 6, 16, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS', 'false', 6, 8, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS_INFO', 'true', 6, 9, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_SEARCHFIELD', 'true', 6, 10, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_WEBSITE', 'true', 6, 11, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_LOGO', 'true', 6, 12, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_LOGOFILE', 'logo.gif', 6, 13, NULL, now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_ORGANISTATION', 'true', 6, 14, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_CONTACT', 'true', 6, 15, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_LOCATION', 'false', 6, 16, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
 
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_EMAIL_SUBJECT', '". $this->standard_mail_subject . "', 6, 30, 'xtc_cfg_input_email_language;" . $this->name . "_EMAIL_SUBJECT', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_NAME', '', '6', 31, 'xtc_cfg_input_email_language;" . $this->name . "_NAME', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_ALTERNATE_NAME', '', '6', 32, 'xtc_cfg_input_email_language;" . $this->name . "_ALTERNATE_NAME', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_WEBSITE_DESCRIPTION', '', 6, 33, 'xtc_cfg_input_email_language;" . $this->name . "_WEBSITE_DESCRIPTION', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_EMAIL', '" . CONTACT_US_EMAIL_ADDRESS . "', 6, 34, 'xtc_cfg_input_email_language;" . $this->name . "_EMAIL', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_DEFAULT', '', 6, 35, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_DEFAULT', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_SERVICE', '', 6, 36, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_SERVICE', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_TECHNICAL', '', 6, 37, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_TECHNICAL', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_BILLING', '', 6, 38, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_BILLING', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_SALES', '', 6, 39, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_SALES', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_FAX', '', 6, 40, 'xtc_cfg_input_email_language;" . $this->name . "_FAX', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_SOCIAL_MEDIA', '', 6, 41, 'xtc_cfg_textarea(', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_STREETADDRESS', '', 6, 80, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_STREETADDRESS', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_ADDRESSLOCALITY', '', 6, 81, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_ADDRESSLOCALITY', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_POSTALCODE', '', 6, 82, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_POSTALCODE', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_ADDRESSCOUNTRY', '', 6, 83, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_ADDRESSCOUNTRY', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LATITUDE', '', 6, 84, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LATITUDE', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LONGITUDE', '',  6, 85, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LONGITUDE', 'xtc_get_email_language_names', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_VERSION', '" . $this->version . "', 6, 99, NULL, now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_EMAIL_SUBJECT', '". $this->standard_mail_subject . "', 6, 30, 'xtc_cfg_input_email_language;" . $this->name . "_EMAIL_SUBJECT', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_NAME', '', '6', 31, 'xtc_cfg_input_email_language;" . $this->name . "_NAME', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_ALTERNATE_NAME', '', '6', 32, 'xtc_cfg_input_email_language;" . $this->name . "_ALTERNATE_NAME', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_WEBSITE_DESCRIPTION', '', 6, 33, 'xtc_cfg_input_email_language;" . $this->name . "_WEBSITE_DESCRIPTION', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_EMAIL', '" . CONTACT_US_EMAIL_ADDRESS . "', 6, 34, 'xtc_cfg_input_email_language;" . $this->name . "_EMAIL', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_DEFAULT', '', 6, 35, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_DEFAULT', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_SERVICE', '', 6, 36, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_SERVICE', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_TECHNICAL', '', 6, 37, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_TECHNICAL', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_BILLING', '', 6, 38, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_BILLING', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_TELEPHONE_SALES', '', 6, 39, 'xtc_cfg_input_email_language;" . $this->name . "_TELEPHONE_SALES', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_FAX', '', 6, 40, 'xtc_cfg_input_email_language;" . $this->name . "_FAX', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SOCIAL_MEDIA', '', 6, 41, 'xtc_cfg_textarea(', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_STREETADDRESS', '', 6, 80, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_STREETADDRESS', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_ADDRESSLOCALITY', '', 6, 81, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_ADDRESSLOCALITY', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_POSTALCODE', '', 6, 82, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_POSTALCODE', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_ADDRESSCOUNTRY', '', 6, 83, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_ADDRESSCOUNTRY', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LATITUDE', '', 6, 84, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LATITUDE', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LONGITUDE', '',  6, 85, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LONGITUDE', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_VERSION', '" . $this->version . "', 6, 99, NULL, now())");
 
         if (!$this->columnExists(TABLE_PRODUCTS, 'mits_jsonld_attributes_enabled')) {
             xtc_db_query("ALTER TABLE " . TABLE_PRODUCTS . " ADD mits_jsonld_attributes_enabled TINYINT(1) NOT NULL DEFAULT 1");
@@ -171,16 +171,16 @@ class mits_json_ld
         xtc_db_query("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '" . $this->version . "' WHERE configuration_key = '" . $this->name . "_VERSION'");
 
         if (!defined($this->name . '_ENABLE_ATTRIBUTES')) {
-          xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_ATTRIBUTES', 'false', 6, 4, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+          xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_ATTRIBUTES', 'false', 6, 4, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
         }
         if (!defined($this->name . '_MAX_OFFERS')) {
-            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_MAX_OFFERS', '100', 6, 5, NULL, now())");
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_MAX_OFFERS', '100', 6, 5, NULL, now())");
         }
         if (!defined($this->name . '_ENABLE_TAGS')) {
-            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_TAGS', 'false', 6, 6, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_TAGS', 'false', 6, 6, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
         }
         if (!defined($this->name . '_ENABLE_MICRODATA_FIX')) {
-            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_colums . ", date_added) VALUES ('" . $this->name . "_ENABLE_MICRODATA_FIX', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_MICRODATA_FIX', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
         }
         if (!defined($this->name . '_WEBSITE_DESCRIPTION')) {
             xtc_db_query("UPDATE " . TABLE_CONFIGURATION . " SET configuration_key = '" . $this->name . "_WEBSITE_DESCRIPTION' WHERE configuration_key = '" . $this->name . "_DESCRIPTION'");

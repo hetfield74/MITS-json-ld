@@ -595,9 +595,14 @@ function mits_build_single_base_offer_without_attributes(
       !empty($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'])
       && stripos($productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_FLAG'], 'special') !== false
     ) {
-        $oldPrice           = mits_jsonld_price_format(
-          $productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_OLD_PRICE_PLAIN']
-        );
+        $oldPricePlain = $productDataArray['PRODUCTS_PRICE_ARRAY'][0]['PRODUCTS_PRICE_OLD_PRICE_PLAIN'] ?? null;
+
+        if ($oldPricePlain === null || $oldPricePlain === '' || (float)$oldPricePlain <= 0) {
+            $oldPricePlain = $basePricePlain;
+        }
+
+        $oldPrice = mits_jsonld_price_format($oldPricePlain);
+
         $priceSpecification[] = [
           '@type'                 => 'UnitPriceSpecification',
           'price'                 => $oldPrice,
