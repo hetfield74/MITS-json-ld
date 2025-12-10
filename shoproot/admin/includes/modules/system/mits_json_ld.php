@@ -34,7 +34,7 @@ class mits_json_ld
     {
         $this->code = 'mits_json_ld';
         $this->name = 'MODULE_' . strtoupper($this->code);
-        $this->version = '1.1.2';
+        $this->version = '1.2.0';
 
         $this->sort_order = defined($this->name . '_SORT_ORDER') ? constant($this->name . '_SORT_ORDER') : 0;
         $this->enabled = defined($this->name . '_STATUS') && (constant($this->name . '_STATUS') == 'true');
@@ -112,6 +112,7 @@ class mits_json_ld
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_MAX_OFFERS', '100', 6, 5, NULL, now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_TAGS', 'true', 6, 6, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_MICRODATA_FIX', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_CUSTOM_JSON', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
 
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS', 'false', 6, 8, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHOW_PRODUCT_REVIEWS_INFO', 'true', 6, 9, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
@@ -141,6 +142,11 @@ class mits_json_ld
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_ADDRESSCOUNTRY', '', 6, 83, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_ADDRESSCOUNTRY', 'xtc_get_email_language_names', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LATITUDE', '', 6, 84, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LATITUDE', 'xtc_get_email_language_names', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", use_function, date_added) VALUES ('" . $this->name . "_LOCATION_GEO_LONGITUDE', '',  6, 85, 'xtc_cfg_input_email_language;" . $this->name . "_LOCATION_GEO_LONGITUDE', 'xtc_get_email_language_names', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_SHIPPING_DETAILS', 'false', 6, 86, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHIPPING_CONFIG', '', 6, 87, 'xtc_cfg_textarea(', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_RETURNS', 'false', 6, 88, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_RETURN_POLICY_CONFIG', '', 6, 89, 'xtc_cfg_textarea(', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_PRICEVALID_DEFAULT_DAYS', '365', 6, 90, NULL, now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_VERSION', '" . $this->version . "', 6, 99, NULL, now())");
 
         if (!$this->columnExists(TABLE_PRODUCTS, 'mits_jsonld_attributes_enabled')) {
@@ -185,6 +191,24 @@ class mits_json_ld
         if (!defined($this->name . '_WEBSITE_DESCRIPTION')) {
             xtc_db_query("UPDATE " . TABLE_CONFIGURATION . " SET configuration_key = '" . $this->name . "_WEBSITE_DESCRIPTION' WHERE configuration_key = '" . $this->name . "_DESCRIPTION'");
         }
+        if (!defined($this->name . '_ENABLE_CUSTOM_JSON')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_CUSTOM_JSON', 'false', 6, 7, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        }
+        if (!defined($this->name . '_ENABLE_SHIPPING_DETAILS')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_SHIPPING_DETAILS', 'false', 6, 86, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        }
+        if (!defined($this->name . '_SHIPPING_CONFIG')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_SHIPPING_CONFIG', '', 6, 87, 'xtc_cfg_textarea(', now())");
+        }
+        if (!defined($this->name . '_ENABLE_RETURNS')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_ENABLE_RETURNS', 'false', 6, 88, 'xtc_cfg_select_option(array(\'true\', \'false\'), ', now())");
+        }
+        if (!defined($this->name . '_RETURN_POLICY_CONFIG')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_RETURN_POLICY_CONFIG', '', 6, 89, 'xtc_cfg_textarea(', now())");
+        }
+        if (!defined($this->name . '_PRICEVALID_DEFAULT_DAYS')) {
+            xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (" . $this->default_columns . ", date_added) VALUES ('" . $this->name . "_PRICEVALID_DEFAULT_DAYS', '365', 6, 90, NULL, now())");
+        }
 
         if (!$this->columnExists(TABLE_PRODUCTS, 'mits_jsonld_attributes_enabled')) {
             xtc_db_query("ALTER TABLE " . TABLE_PRODUCTS . " ADD mits_jsonld_attributes_enabled TINYINT(1) NOT NULL DEFAULT 1");
@@ -225,6 +249,7 @@ class mits_json_ld
           $this->name . '_ENABLE_TAGS',
           $this->name . '_MAX_OFFERS',
           $this->name . '_ENABLE_MICRODATA_FIX',
+          $this->name . '_ENABLE_CUSTOM_JSON',
           $this->name . '_SHOW_PRODUCT_REVIEWS',
           $this->name . '_SHOW_PRODUCT_REVIEWS_INFO',
           $this->name . '_SHOW_SEARCHFIELD',
@@ -251,6 +276,11 @@ class mits_json_ld
           $this->name . '_LOCATION_ADDRESSCOUNTRY',
           $this->name . '_LOCATION_GEO_LATITUDE',
           $this->name . '_LOCATION_GEO_LONGITUDE',
+          $this->name . '_ENABLE_SHIPPING_DETAILS',
+          $this->name . '_SHIPPING_CONFIG',
+          $this->name . '_ENABLE_RETURNS',
+          $this->name . '_RETURN_POLICY_CONFIG',
+          $this->name . '_PRICEVALID_DEFAULT_DAYS',
         );
 
         return $key;
@@ -293,10 +323,27 @@ class mits_json_ld
     {
         $remove_files_array = array(
           DIR_FS_DOCUMENT_ROOT . (defined('DIR_ADMIN') ? DIR_ADMIN : 'admin/') . 'includes/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/dutch/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/dutch/extra/admin/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/english/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/english/extra/admin/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/french/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/french/extra/admin/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/german/modules/system/' . $this->code . '.php',
-          DIR_FS_DOCUMENT_ROOT . 'includes/extra/header/header_head/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/german/extra/admin/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/italian/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/italian/extra/admin/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/spanish/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'lang/spanish/extra/admin/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'includes/extra/application_bottom/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/application_top/application_top_end/mits_jsonld_helpers.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/default/categories_smarty/mits_jsonld_cleanup.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/header/header_head/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/modules/products_listing_begin/mits_jsonld_cleanup.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/modules/products_attributes_end/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/modules/products_info_end/mits_jsonld_cleanup.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/modules/products_tags_end/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . 'includes/extra/shop_content_end/mits_jsonld_cleanup.php',
         );
 
         foreach ($remove_files_array as $delete_file) {

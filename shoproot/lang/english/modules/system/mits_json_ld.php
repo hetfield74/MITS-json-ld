@@ -61,6 +61,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Activate Microdata Fix?',
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Removes the Microdata attributes from the shop using jQuery, in case the Microdata schema is still present in the template used. Duplicate structured data (JSON-LD and Microdata) is not ideal as it can lead to inconsistencies.',
 
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Automatically detect & integrate custom JSON-LD from texts?',
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'If activated, the module searches product and content pages for embedded &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt; blocks, removes them from the text, and correctly integrates them into the module\'s central JSON-LD.<br><br><strong>Note:</strong> This function is only necessary if structured data is embedded in the editor. With very large texts or high-traffic shops, it can cause slightly increased server load.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Activate reviews for products?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activate JSON-LD markup for reviews on the product detail page? Only effective when product markup is activated.',
 
@@ -139,7 +142,87 @@ $lang_array = array(
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_TITLE' => 'GEO longitude',
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_DESC'  => 'Optional GEO longitude. Leave empty for no value.',
 
-  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;padding:2px;border:1px solid #900;">Please update the module!</span>',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_TITLE' => 'Output ShippingDetails in JSON-LD?',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_DESC'  => 'If "Yes", the shipping information configured below will be output as <code>shippingDetails</code> in the Offers.',
+
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_TITLE' => 'Shipping configuration for shippingDetails',
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_DESC'  => '<code>country|label|price|currency|handlingMin|handlingMax|transitMin|transitMax|minValue|maxValue</code>
+
+<p><strong>Fields:</strong></p>
+<ul>
+<li><b>country</b>: Country codes (ISO2), separated by commas
+  &nbsp;&nbsp;e.g. <code>DE</code> or <code>DE,AT,CH</code></li>
+<li><b>label</b>: Name of the shipping method
+  &nbsp;&nbsp;e.g. <code>DHL Standard</code>, <code>International Shipping</code></li>
+<li><b>price</b>: Shipping costs<br>
+  &nbsp;&nbsp;&ndash; <code>0.00</code> for free<br>
+  &nbsp;&nbsp;&ndash; <code>free</code> is automatically converted to <code>0.00</code></li>
+<li><b>currency</b>: Currency, e.g. <code>EUR</code></li>
+<li><b>handlingMin / handlingMax</b>: Handling time in days
+  &nbsp;&nbsp;&rarr; e.g. <code>0|1</code> = between 0 and 1 day</li>
+<li><b>transitMin / transitMax</b>: Transit time in days
+  &nbsp;&nbsp;&rarr; e.g. <code>1|3</code> = delivery between 1 and 3 days</li>
+<li><b>minValue</b> (optional): Minimum value of goods from which this shipping rule applies</li>
+<li><b>maxValue</b> (optional): Maximum value of goods up to which the rule applies</li>
+</ul>
+<p>If minValue/maxValue are left empty &rarr; applies to all values of goods.</p>
+<p><strong>Examples:</strong></p>
+<ol>
+<li>Germany & Austria, Standard shipping €4.90
+  <code>DE,AT|Standard Shipping|4.90|EUR|0|1|1|3</code></li>
+<li>Germany, Free shipping from €150
+  <code>DE|DHL Standard from 150 EUR|0.00|EUR|0|1|1|3|150|</code></li>
+<li>Switzerland, International shipping €9.90, without value of goods limitation
+  <code>CH|International Shipping|9.90|EUR|0|1|2|5</code></li>
+<li>EU shipping with minimum and maximum value
+  <code>EU|EU Shipping|12.90|EUR|0|2|3|7|50|200</code></li>
+</ol>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Each line generates its own <em>OfferShippingDetails</em> structure.</li>
+<li>If multiple countries are specified, the system automatically creates individual entries per country.</li>
+<li>minValue/maxValue are optional &ndash; if the fields are empty, no restrictions apply.</li>
+</ul>',
+
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_TITLE' => 'Output Return Policy (hasMerchantReturnPolicy)?',
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_DESC'  => 'If "Yes", the return policy configured below will be output as <code>hasMerchantReturnPolicy</code> in the Offers.',
+
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_TITLE' => 'Return Policy Configuration',
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_DESC'  => 'Enter one return rule per line. Format:<br>
+<code>country|minDays|maxDays|category|feeType|method</code>
+<p><strong>Fields:</strong></p>
+<ul>
+<li><b>country</b>: Country codes (ISO2), separated by commas &ndash; e.g. <code>DE</code> or <code>DE,AT,CH</code></li>
+<li><b>minDays</b>: Minimum return period in days</li>
+<li><b>maxDays</b>: Maximum return period in days (can be identical to minDays)</li>
+<li><b>category</b>: Return policy type<br>
+ &nbsp;&nbsp;&bull; <code>finite</code> &ndash; returns possible and time-limited<br>
+ &nbsp;&nbsp;&bull; <code>unlimited</code> &ndash; returns possible with no time limit<br>
+ &nbsp;&nbsp;&bull; <code>not_permitted</code> &ndash; returns not allowed</li>
+<li><b>feeType</b>: Who bears the return shipping costs?<br>
+ &nbsp;&nbsp;&bull; <code>free</code> &ndash; Merchant bears the costs (FreeReturn)<br>
+ &nbsp;&nbsp;&bull; <code>buyer</code> &ndash; Customer bears the costs<br>
+ &nbsp;&nbsp;&bull; <code>seller</code> &ndash; Merchant bears the costs</li>
+<li><b>method</b>: Return method<br>
+ &nbsp;&nbsp;&bull; <code>mail</code> &ndash; Return by mail/shipping<br>
+ &nbsp;&nbsp;&bull; <code>store</code> &ndash; Return in physical store<br>
+ &nbsp;&nbsp;&bull; <code>both</code> &ndash; Return by mail or in store<br>
+ &nbsp;&nbsp;&bull; <code>none</code> &ndash; No return possible</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ol>
+<li>Germany, 14–30 days return period, free of charge, by mail:<br>
+<code>DE|14|30|finite|free|mail</code></li>
+<li>Austria & Switzerland, 14–30 days, customer pays return shipping:<br>
+<code>AT,CH|14|30|finite|buyer|mail</code></li>
+<li>No returns for specific countries:<br>
+<code>US|0|0|not_permitted|buyer|none</code></li>
+</ol>',
+
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_TITLE' => 'Default validity for priceValidUntil (days)',
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_DESC'  => 'If no expiry date from a special price is available, <code>priceValidUntil</code> is set to this number of days into the future. 0 = do not set <code>priceValidUntil</code>.',
+
+  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;border-radius:3px;padding:2px;border:1px solid #900;">Please update the module!</span>',
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_DESC'  => '',
   'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'The MITS JSON-LD module has been updated.',
   'MODULE_' . $modulname . '_UPDATE_ERROR'           => 'Error',
