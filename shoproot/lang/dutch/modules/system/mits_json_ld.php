@@ -62,6 +62,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Microdata Fix activeren?',
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Verwijdert met behulp van jQuery de Microdata-attributen uit de shop, voor het geval dat het Microdata-schema nog steeds aanwezig is in de gebruikte template. Dubbele gestructureerde gegevens (JSON-LD en Microdata) zijn niet ideaal omdat ze tot inconsistenties kunnen leiden.',
 
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Aangepaste JSON-LD automatisch uit teksten detecteren & integreren?',
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'Indien geactiveerd, zoekt de module product- en inhoudspagina\'s af naar ingebedde &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt;-blokken, verwijdert deze uit de tekst en integreert ze correct in de centrale JSON-LD van de module.<br><br><strong>Opmerking:</strong> Deze functie is alleen nodig als gestructureerde gegevens in de editor zijn ingesloten. Bij zeer grote teksten of drukbezochte shops kan dit leiden tot een licht verhoogde serverbelasting.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Productreviews activeren?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON-LD-markering voor reviews op de productdetailpagina activeren? Alleen in combinatie met productmarkering.',
 
@@ -140,7 +143,87 @@ $lang_array = array(
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_TITLE' => 'GEO lengtegraad',
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_DESC'  => 'Optioneel. Leeg laten indien niet gebruikt.',
 
-  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;padding:2px;border:1px solid #900;">Module-update vereist!</span>',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_TITLE' => 'ShippingDetails in JSON-LD uitvoeren?',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_DESC'  => 'Als "Ja", wordt de hieronder geconfigureerde verzendinformatie uitgevoerd als <code>shippingDetails</code> in de Offers.',
+
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_TITLE' => 'Verzendconfiguratie voor shippingDetails',
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_DESC'  => '<code>country|label|price|currency|handlingMin|handlingMax|transitMin|transitMax|minValue|maxValue</code>
+
+<p><strong>Velden:</strong></p>
+<ul>
+<li><b>country</b>: Landcodes (ISO2), gescheiden door komma\'s
+  &nbsp;&nbsp;bv. <code>DE</code> of <code>DE,AT,CH</code></li>
+<li><b>label</b>: Naam van de verzendmethode
+  &nbsp;&nbsp;bv. <code>DHL Standard</code>, <code>Internationale Verzending</code></li>
+<li><b>price</b>: Verzendkosten<br>
+  &nbsp;&nbsp;&ndash; <code>0.00</code> voor gratis<br>
+  &nbsp;&nbsp;&ndash; <code>free</code> wordt automatisch omgezet naar <code>0.00</code></li>
+<li><b>currency</b>: Valuta, bv. <code>EUR</code></li>
+<li><b>handlingMin / handlingMax</b>: Verwerkingstijd in dagen
+  &nbsp;&nbsp;&rarr; bv. <code>0|1</code> = tussen 0 en 1 dag</li>
+<li><b>transitMin / transitMax</b>: Levertijd in dagen
+  &nbsp;&nbsp;&rarr; bv. <code>1|3</code> = levering tussen 1 en 3 dagen</li>
+<li><b>minValue</b> (optioneel): Minimale goederenwaarde vanaf waar deze verzendregel van toepassing is</li>
+<li><b>maxValue</b> (optioneel): Maximale goederenwaarde tot waar de regel van toepassing is</li>
+</ul>
+<p>Als minValue/maxValue leeg blijven &rarr; geldt voor alle goederenwaarden.</p>
+<p><strong>Voorbeelden:</strong></p>
+<ol>
+<li>Duitsland & Oostenrijk, Standaard verzending €4,90
+  <code>DE,AT|Standaard Verzending|4.90|EUR|0|1|1|3</code></li>
+<li>Duitsland, Gratis verzending vanaf €150
+  <code>DE|DHL Standaard vanaf 150 EUR|0.00|EUR|0|1|1|3|150|</code></li>
+<li>Zwitserland, Internationale verzending €9,90, zonder beperking van goederenwaarde
+  <code>CH|Internationale Verzending|9.90|EUR|0|1|2|5</code></li>
+<li>EU-verzending met minimum- en maximumwaarde
+  <code>EU|EU Verzending|12.90|EUR|0|2|3|7|50|200</code></li>
+</ol>
+<p><strong>Opmerkingen:</strong></p>
+<ul>
+<li>Elke regel genereert zijn eigen <em>OfferShippingDetails</em>-structuur.</li>
+<li>Als er meerdere landen worden opgegeven, creëert het systeem automatisch afzonderlijke vermeldingen per land.</li>
+<li>minValue/maxValue zijn optioneel &ndash; bij lege velden zijn er geen beperkingen van toepassing.</li>
+</ul>',
+
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_TITLE' => 'Retourbeleid (hasMerchantReturnPolicy) uitvoeren?',
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_DESC'  => 'Als "Ja", wordt het hieronder geconfigureerde retourbeleid uitgevoerd als <code>hasMerchantReturnPolicy</code> in de Offers.',
+
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_TITLE' => 'Retourbeleid Configuratie',
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_DESC'  => 'Voer één retourregel per regel in. Formaat:<br>
+<code>country|minDays|maxDays|category|feeType|method</code>
+<p><strong>Velden:</strong></p>
+<ul>
+<li><b>country</b>: Landcodes (ISO2), gescheiden door komma\'s &ndash; bv. <code>DE</code> of <code>DE,AT,CH</code></li>
+<li><b>minDays</b>: Minimale retourperiode in dagen</li>
+<li><b>maxDays</b>: Maximale retourperiode in dagen (mag identiek zijn aan minDays)</li>
+<li><b>category</b>: Type retourregel<br>
+ &nbsp;&nbsp;&bull; <code>finite</code> &ndash; retour mogelijk en tijdelijk beperkt<br>
+ &nbsp;&nbsp;&bull; <code>unlimited</code> &ndash; retour onbeperkt in tijd<br>
+ &nbsp;&nbsp;&bull; <code>not_permitted</code> &ndash; retour niet toegestaan</li>
+<li><b>feeType</b>: Wie draagt de retourverzendkosten?<br>
+ &nbsp;&nbsp;&bull; <code>free</code> &ndash; Verkoper draagt de kosten (FreeReturn)<br>
+ &nbsp;&nbsp;&bull; <code>buyer</code> &ndash; Klant draagt de kosten<br>
+ &nbsp;&nbsp;&bull; <code>seller</code> &ndash; Verkoper draagt de kosten</li>
+<li><b>method</b>: Retourmethode<br>
+ &nbsp;&nbsp;&bull; <code>mail</code> &ndash; Retour per post/verzending<br>
+ &nbsp;&nbsp;&bull; <code>store</code> &ndash; Retour in de fysieke winkel<br>
+ &nbsp;&nbsp;&bull; <code>both</code> &ndash; Retour per post of in de winkel<br>
+ &nbsp;&nbsp;&bull; <code>none</code> &ndash; Geen retour mogelijk</li>
+</ul>
+<p><strong>Voorbeelden:</strong></p>
+<ol>
+<li>Duitsland, 14–30 dagen retourtermijn, gratis, per verzending:<br>
+<code>DE|14|30|finite|free|mail</code></li>
+<li>Oostenrijk & Zwitserland, 14–30 dagen, klant betaalt retourzending:<br>
+<code>AT,CH|14|30|finite|buyer|mail</code></li>
+<li>Geen retour voor specifieke landen:<br>
+<code>US|0|0|not_permitted|buyer|none</code></li>
+</ol>',
+
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_TITLE' => 'Standaard geldigheid voor priceValidUntil (dagen)',
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_DESC'  => 'Als er geen vervaldatum van een speciale prijs beschikbaar is, wordt <code>priceValidUntil</code> ingesteld op dit aantal dagen in de toekomst. 0 = geen <code>priceValidUntil</code> instellen.',
+
+  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;border-radius:3px;padding:2px;border:1px solid #900;">Module-update vereist!</span>',
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_DESC'  => '',
   'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'De module MITS JSON-LD is bijgewerkt.',
   'MODULE_' . $modulname . '_UPDATE_ERROR'           => 'Fout',

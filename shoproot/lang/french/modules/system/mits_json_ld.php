@@ -61,6 +61,9 @@ $lang_array = array(
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_TITLE' => 'Activer la correction Microdata ?',
   'MODULE_' . $modulname . '_ENABLE_MICRODATA_FIX_DESC'  => '<i>Supprime les attributs Microdata de la boutique à l\'aide de jQuery, au cas où le schéma Microdata serait encore présent dans le template utilisé. Les données structurées en double (JSON-LD et Microdata) ne sont pas idéales car elles peuvent entraîner des incohérences.',
 
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Détecter et intégrer automatiquement le JSON-LD personnalisé à partir des textes ?',
+  'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'Si activé, le module recherche les blocs &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt; intégrés dans les pages produits et de contenu, les retire du texte et les intègre correctement dans le JSON-LD central du module.<br><br><strong>Remarque :</strong> Cette fonction n\'est nécessaire que si des données structurées sont intégrées dans l\'éditeur. Pour les textes très volumineux ou les boutiques à trafic élevé, cela peut entraîner une légère augmentation de la charge du serveur.',
+
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Activer les avis des produits ?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activer le balisage JSON-LD pour les avis sur la page produit ? Seulement en combinaison avec le balisage Produit.',
 
@@ -139,7 +142,87 @@ $lang_array = array(
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_TITLE' => 'Longitude GEO',
   'MODULE_' . $modulname . '_LOCATION_GEO_LONGITUDE_DESC'  => 'Optionnel. Laisser vide si non utilisé.',
 
-  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;padding:2px;border:1px solid #900;">Veuillez effectuer une mise à jour !</span>',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_TITLE' => 'Afficher les ShippingDetails en JSON-LD ?',
+  'MODULE_' . $modulname . '_ENABLE_SHIPPING_DETAILS_DESC'  => 'Si "Oui", les informations de livraison configurées ci-dessous seront affichées comme <code>shippingDetails</code> dans les Offres.',
+
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_TITLE' => 'Configuration de la livraison pour shippingDetails',
+  'MODULE_' . $modulname . '_SHIPPING_CONFIG_DESC'  => '<code>country|label|price|currency|handlingMin|handlingMax|transitMin|transitMax|minValue|maxValue</code>
+
+<p><strong>Champs:</strong></p>
+<ul>
+<li><b>country</b>: Codes pays (ISO2), séparés par des virgules
+  &nbsp;&nbsp;ex. <code>DE</code> ou <code>DE,AT,CH</code></li>
+<li><b>label</b>: Nom de la méthode de livraison
+  &nbsp;&nbsp;ex. <code>DHL Standard</code>, <code>Livraison Internationale</code></li>
+<li><b>price</b>: Frais de livraison<br>
+  &nbsp;&nbsp;&ndash; <code>0.00</code> pour gratuit<br>
+  &nbsp;&nbsp;&ndash; <code>free</code> est automatiquement converti en <code>0.00</code></li>
+<li><b>currency</b>: Devise, ex. <code>EUR</code></li>
+<li><b>handlingMin / handlingMax</b>: Temps de traitement en jours
+  &nbsp;&nbsp;&rarr; ex. <code>0|1</code> = entre 0 et 1 jour</li>
+<li><b>transitMin / transitMax</b>: Temps de transit/livraison en jours
+  &nbsp;&nbsp;&rarr; ex. <code>1|3</code> = livraison entre 1 et 3 jours</li>
+<li><b>minValue</b> (facultatif): Valeur minimale des marchandises à partir de laquelle cette règle de livraison s\'applique</li>
+<li><b>maxValue</b> (facultatif): Valeur maximale des marchandises jusqu\'à laquelle la règle s\'applique</li>
+</ul>
+<p>Si minValue/maxValue sont laissés vides &rarr; s\'applique à toutes les valeurs de marchandises.</p>
+<p><strong>Exemples:</strong></p>
+<ol>
+<li>Allemagne & Autriche, Livraison standard 4,90 €
+  <code>DE,AT|Livraison Standard|4.90|EUR|0|1|1|3</code></li>
+<li>Allemagne, Livraison gratuite à partir de 150 €
+  <code>DE|DHL Standard à partir de 150 EUR|0.00|EUR|0|1|1|3|150|</code></li>
+<li>Suisse, Livraison internationale 9,90 €, sans limitation de valeur de marchandises
+  <code>CH|Livraison Internationale|9.90|EUR|0|1|2|5</code></li>
+<li>Livraison UE avec valeur minimale et maximale
+  <code>EU|Livraison UE|12.90|EUR|0|2|3|7|50|200</code></li>
+</ol>
+<p><strong>Remarques:</strong></p>
+<ul>
+<li>Chaque ligne génère sa propre structure <em>OfferShippingDetails</em>.</li>
+<li>Si plusieurs pays sont spécifiés, le système crée automatiquement des entrées individuelles par pays.</li>
+<li>minValue/maxValue sont facultatifs &ndash; si les champs sont vides, aucune restriction ne s\'applique.</li>
+</ul>',
+
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_TITLE' => 'Afficher la Politique de Retour (hasMerchantReturnPolicy)?',
+  'MODULE_' . $modulname . '_ENABLE_RETURNS_DESC'  => 'Si "Oui", la politique de retour configurée ci-dessous sera affichée comme <code>hasMerchantReturnPolicy</code> dans les Offres.',
+
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_TITLE' => 'Configuration de la Politique de Retour',
+  'MODULE_' . $modulname . '_RETURN_POLICY_CONFIG_DESC'  => 'Entrez une règle de retour par ligne. Format:<br>
+<code>country|minDays|maxDays|category|feeType|method</code>
+<p><strong>Champs:</strong></p>
+<ul>
+<li><b>country</b>: Codes pays (ISO2), séparés par des virgules &ndash; ex. <code>DE</code> ou <code>DE,AT,CH</code></li>
+<li><b>minDays</b>: Période minimale de retour en jours</li>
+<li><b>maxDays</b>: Période maximale de retour en jours (peut être identique à minDays)</li>
+<li><b>category</b>: Type de règle de retour<br>
+ &nbsp;&nbsp;&bull; <code>finite</code> &ndash; retour possible et limité dans le temps<br>
+ &nbsp;&nbsp;&bull; <code>unlimited</code> &ndash; retour illimité dans le temps<br>
+ &nbsp;&nbsp;&bull; <code>not_permitted</code> &ndash; retour non autorisé</li>
+<li><b>feeType</b>: Qui prend en charge les frais de retour?<br>
+ &nbsp;&nbsp;&bull; <code>free</code> &ndash; Le marchand prend en charge les frais (FreeReturn)<br>
+ &nbsp;&nbsp;&bull; <code>buyer</code> &ndash; Le client prend en charge les frais<br>
+ &nbsp;&nbsp;&bull; <code>seller</code> &ndash; Le marchand prend en charge les frais</li>
+<li><b>method</b>: Méthode de retour<br>
+ &nbsp;&nbsp;&bull; <code>mail</code> &ndash; Retour par courrier/envoi<br>
+ &nbsp;&nbsp;&bull; <code>store</code> &ndash; Retour en magasin physique<br>
+ &nbsp;&nbsp;&bull; <code>both</code> &ndash; Retour par courrier ou en magasin<br>
+ &nbsp;&nbsp;&bull; <code>none</code> &ndash; Aucun retour possible</li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<ol>
+<li>Allemagne, période de retour 14–30 jours, gratuit, par envoi:<br>
+<code>DE|14|30|finite|free|mail</code></li>
+<li>Autriche & Suisse, 14–30 jours, le client paie le retour:<br>
+<code>AT,CH|14|30|finite|buyer|mail</code></li>
+<li>Pas de retour pour des pays spécifiques:<br>
+<code>US|0|0|not_permitted|buyer|none</code></li>
+</ol>',
+
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_TITLE' => 'Validité par défaut pour priceValidUntil (jours)',
+  'MODULE_' . $modulname . '_PRICEVALID_DEFAULT_DAYS_DESC'  => 'S\'il n\'y a pas de date d\'expiration d\'un prix spécial disponible, <code>priceValidUntil</code> est défini à ce nombre de jours dans le futur. 0 = ne pas définir <code>priceValidUntil</code>.',
+
+  'MODULE_' . $modulname . '_UPDATE_AVAILABLE_TITLE' => '<span style="font-weight:bold;color:#900;background:#ff6;border-radius:3px;padding:2px;border:1px solid #900;">Veuillez effectuer une mise à jour !</span>',
   'MODULE_' . $modulname . '_UPDATE_AVAILABLE_DESC'  => '',
   'MODULE_' . $modulname . '_UPDATE_FINISHED'        => 'Le module MITS JSON-LD a été mis à jour.',
   'MODULE_' . $modulname . '_UPDATE_ERROR'           => 'Erreur',
