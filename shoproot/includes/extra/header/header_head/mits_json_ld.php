@@ -591,10 +591,12 @@ function mits_jsonld_collect_shipping_details(): array
 {
     $details = mits_jsonld_build_shipping_details_from_config();
 
+    /*
     $auto = mits_jsonld_build_shipping_details_from_modules();
     if (!empty($auto)) {
         $details = array_merge($details, $auto);
     }
+    */
 
     return $details;
 }
