@@ -323,6 +323,8 @@ class mits_json_ld
     {
         $remove_files_array = array(
           DIR_FS_DOCUMENT_ROOT . (defined('DIR_ADMIN') ? DIR_ADMIN : 'admin/') . 'includes/modules/system/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . (defined('DIR_ADMIN') ? DIR_ADMIN : 'admin/') . 'includes/extra/modules/add_db_fields/' . $this->code . '.php',
+          DIR_FS_DOCUMENT_ROOT . (defined('DIR_ADMIN') ? DIR_ADMIN : 'admin/') . 'includes/extra/modules/new_products/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/dutch/modules/system/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/dutch/extra/admin/' . $this->code . '.php',
           DIR_FS_DOCUMENT_ROOT . 'lang/english/modules/system/' . $this->code . '.php',
