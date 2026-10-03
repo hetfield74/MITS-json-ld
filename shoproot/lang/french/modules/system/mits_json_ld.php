@@ -24,10 +24,12 @@ $lang_array = array(
     <p>Ce module prend en charge les types de balisage suivants :</p>
     <ul style="font-size: larger">
       <li>WebSite <small>name, alternateName, description, url et logo</small></li>
-      <li>Organization <small>name, alternateName, description, url, logo et ContactPoints pour customer service, technical support, billing support, sales</small></li>
-      <li>LocalBusiness <small>name, image, url, telephone, address, geo, sameAs</small></li>
+      <li>Organization <small>name, alternateName, description, address, url, logo, founder, foundingDate et ContactPoints pour customer service, technical support, billing support, sales</small></li>
+      <li>LocalBusiness <small>name, image, description, url, telephone, address, geo, sameAs, founder, foundingDate</small></li>
+      <li>WebPage <small>pages du gestionnaire de contenu</small></li>
       <li>ContactPage <small>name, url, description</small></li>
       <li>Breadcrumb</li>
+      <li>CollectionPage <small>Pages de cat&eacute;gorie et de r&eacute;sultats de recherche avec ItemList</small></li>
       <li>Product <small>name, image, description, brand, priceCurrency, priceValidUntil (fixé à 1 mois), price, url, itemCondition, availability, mpn, sku, gtin13 et reviews</small></li>
       <li>Review (Rating et aggregateRating) <small>ratingValue, worstRating, bestRating, author, datePublished, reviewBody</small></li>
       <li>Sitelink Searchbox</li>
@@ -49,6 +51,16 @@ $lang_array = array(
   'MODULE_' . $modulname . '_SHOW_PRODUCT_TITLE' => 'Activer les produits ?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'Activer le balisage JSON-LD pour les produits sur la page de détails ?',
 
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_TITLE' => 'Activer les pages de cat&eacute;gorie ?',
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_DESC'  => 'G&eacute;n&eacute;rer le balisage JSON-LD des pages de cat&eacute;gorie comme <code>CollectionPage</code> avec une <code>ItemList</code> des produits visibles ? Seules les URL des produits sont ajout&eacute;es, pas de balisage Product complet.',
+
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Activer les pages de r&eacute;sultats de recherche ?',
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'Afficher le balisage JSON-LD pour la page de r&eacute;sultats de recherche <code>advanced_search_result.php</code> comme <code>CollectionPage</code> avec une <code>ItemList</code> de la liste de produits visible ? La pagination est prise en compte ; seules les URL des produits sont sorties dans la liste, pas de balisage Product complet.',
+
+
+  'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Activer les pages de contenu ?',
+  'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'G&eacute;n&eacute;rer le balisage JSON-LD des pages g&eacute;n&eacute;rales du gestionnaire de contenu. Le type par d&eacute;faut est <code>WebPage</code>; si la colonne optionnelle <code>mits_jsonld_schema_type</code> existe et contient <code>Article</code>, <code>Article</code> est utilis&eacute;. La page de contact reste <code>ContactPage</code>.',
+
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Afficher les attributs dans JSON-LD',
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_DESC'  => 'Les attributs de produits doivent-ils être affichés comme des offres ?',
 
@@ -63,6 +75,9 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Détecter et intégrer automatiquement le JSON-LD personnalisé à partir des textes ?',
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'Si activé, le module recherche les blocs &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt; intégrés dans les pages produits et de contenu, les retire du texte et les intègre correctement dans le JSON-LD central du module.<br><br><strong>Remarque :</strong> Cette fonction n\'est nécessaire que si des données structurées sont intégrées dans l\'éditeur. Pour les textes très volumineux ou les boutiques à trafic élevé, cela peut entraîner une légère augmentation de la charge du serveur.',
+
+  'MODULE_' . $modulname . '_JSON_ENCODING_TITLE' => 'Encodage JSON pour la sortie',
+  'MODULE_' . $modulname . '_JSON_ENCODING_DESC'  => 'D&eacute;finit comment les cha&icirc;nes sont normalis&eacute;es avant <code>json_encode()</code>. <code>auto</code> conserve l&#039;UTF-8 valide et convertit sinon ISO-8859-15 en UTF-8.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Activer les avis des produits ?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Activer le balisage JSON-LD pour les avis sur la page produit ? Seulement en combinaison avec le balisage Produit.',
@@ -118,11 +133,64 @@ $lang_array = array(
   'MODULE_' . $modulname . '_TELEPHONE_SALES_TITLE' => 'Numéro du service commercial',
   'MODULE_' . $modulname . '_TELEPHONE_SALES_DESC'  => 'Numéro du service commercial. Format requis : +49-2722-631363',
 
+
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_TITLE' => 'Service email address',
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_DESC'  => 'This email address is output as <code>email</code> for the customer service ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_TITLE' => 'Technical support email address',
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_DESC'  => 'This email address is output as <code>email</code> for the technical support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_BILLING_TITLE' => 'Billing email address',
+  'MODULE_' . $modulname . '_EMAIL_BILLING_DESC'  => 'This email address is output as <code>email</code> for the billing support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_SALES_TITLE' => 'Sales email address',
+  'MODULE_' . $modulname . '_EMAIL_SALES_DESC'  => 'This email address is output as <code>email</code> for the sales ContactPoint.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_TITLE' => 'ContactOption default contact',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_DESC'  => 'Optional Schema.org <code>contactOption</code> for the default contact. Possible values: empty, <code>TollFree</code> or <code>HearingImpairedSupported</code>.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_TITLE' => 'ContactOption customer service',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_DESC'  => 'Optional Schema.org <code>contactOption</code> for customer service.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_TITLE' => 'ContactOption technical support',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_DESC'  => 'Optional Schema.org <code>contactOption</code> for technical support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_TITLE' => 'ContactOption billing',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_DESC'  => 'Optional Schema.org <code>contactOption</code> for billing support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_TITLE' => 'ContactOption sales',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_DESC'  => 'Optional Schema.org <code>contactOption</code> for sales.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_TITLE' => 'Contact availability fallback / hoursAvailable',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_DESC'  => 'Optional fallback: one time range per line in the format <code>Mo-Fr 09:00-17:00</code>. Multiple days can be comma-separated, e.g. <code>Mo,We,Fr 10:00-14:00</code>. This value is only used when the respective ContactPoint has no specific availability configured.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_TITLE' => 'Availability default contact',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for the default contact. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_TITLE' => 'Availability customer service',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for customer service. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_TITLE' => 'Availability technical support',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for technical support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_TITLE' => 'Availability billing',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for billing support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_TITLE' => 'Availability sales',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for sales. Leave empty to use the fallback.',
+
   'MODULE_' . $modulname . '_FAX_TITLE' => 'Numéro de fax',
   'MODULE_' . $modulname . '_FAX_DESC'  => 'Numéro de fax de l’entreprise. Format requis : +49-2722-631400',
 
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_TITLE' => 'Profils de réseaux sociaux',
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_DESC'  => 'Saisissez ici les URL complètes de vos profils sociaux. Séparez plusieurs URL par une virgule.',
+
+  'MODULE_' . $modulname . '_FOUNDER_TITLE' => 'Fondateur',
+  'MODULE_' . $modulname . '_FOUNDER_DESC'  => 'Nom du fondateur. Cette valeur est sortie comme <code>founder</code> dans le balisage Organization et LocalBusiness.',
+
+  'MODULE_' . $modulname . '_FOUNDING_DATE_TITLE' => 'Date de cr&eacute;ation',
+  'MODULE_' . $modulname . '_FOUNDING_DATE_DESC'  => 'Date de cr&eacute;ation au format ISO <code>YYYY-MM-DD</code>, par ex. <code>2019-03-18</code>. Cette valeur est sortie comme <code>foundingDate</code> dans le balisage Organization et LocalBusiness.',
+
 
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_TITLE' => 'Rue / numéro',
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_DESC'  => 'Rue et numéro pour le balisage LocalBusiness.',

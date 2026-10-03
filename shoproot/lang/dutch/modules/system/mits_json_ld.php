@@ -24,10 +24,12 @@ $lang_array = array(
     <p>De module ondersteunt markeringen voor de volgende typen:</p>
     <ul style="font-size: larger">
       <li>WebSite <small>name, alternateName, description, url en logo</small></li>
-      <li>Organization <small>name, alternateName, description, url, logo en ContactPoints voor customer service, technical support, billing support, sales</small></li>
-      <li>LocalBusiness <small>name, image, url, telephone, address, geo, sameAs</small></li>
+      <li>Organization <small>name, alternateName, description, address, url, logo, founder, foundingDate en ContactPoints voor customer service, technical support, billing support, sales</small></li>
+      <li>LocalBusiness <small>name, image, description, url, telephone, address, geo, sameAs, founder, foundingDate</small></li>
+      <li>WebPage <small>contentmanagerpagina&#39;s</small></li>
       <li>ContactPage <small>name, url, description</small></li>
       <li>Breadcrumb</li>
+      <li>CollectionPage <small>Categorie- en zoekresultaatpagina&#39;s met ItemList</small></li>
       <li>Product <small>name, image, description, brand, priceCurrency, priceValidUntil (vast: 1 maand), price, url, itemCondition, availability, mpn, sku, gtin13 en reviews</small></li>
       <li>Review <small>ratingValue, worstRating, bestRating, author, datePublished, reviewBody</small></li>
       <li>Sitelink Searchbox</li>
@@ -50,6 +52,16 @@ $lang_array = array(
   'MODULE_' . $modulname . '_SHOW_PRODUCT_TITLE' => 'Producten activeren?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'JSON-LD-markering voor producten op de productdetailpagina activeren?',
 
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_TITLE' => 'Categoriepagina&#39;s activeren?',
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_DESC'  => 'JSON-LD markup voor categoriepagina&#39;s als <code>CollectionPage</code> met een <code>ItemList</code> van de zichtbare productlijst uitvoeren? Alleen product-URL&#39;s worden toegevoegd, geen volledige Product-markup.',
+
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Zoekresultaatpagina&#39;s activeren?',
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'JSON-LD markup voor de zoekresultaatpagina <code>advanced_search_result.php</code> als <code>CollectionPage</code> met <code>ItemList</code> van de zichtbare productlijst uitvoeren? Paginering wordt meegenomen; er worden alleen product-URL&#39;s in de lijst uitgevoerd, geen volledige Product-markups.',
+
+
+  'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Contentpagina&#39;s activeren?',
+  'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'JSON-LD-markering voor algemene contentmanagerpagina&#39;s uitvoeren. Standaard is <code>WebPage</code>; als de optionele contentkolom <code>mits_jsonld_schema_type</code> bestaat en <code>Article</code> bevat, wordt <code>Article</code> gebruikt. De contactpagina blijft <code>ContactPage</code>.',
+
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Productattributen in JSON-LD weergeven',
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_DESC'  => 'Moeten productattributen als Offers worden weergegeven?',
 
@@ -64,6 +76,9 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Aangepaste JSON-LD automatisch uit teksten detecteren & integreren?',
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'Indien geactiveerd, zoekt de module product- en inhoudspagina\'s af naar ingebedde &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt;-blokken, verwijdert deze uit de tekst en integreert ze correct in de centrale JSON-LD van de module.<br><br><strong>Opmerking:</strong> Deze functie is alleen nodig als gestructureerde gegevens in de editor zijn ingesloten. Bij zeer grote teksten of drukbezochte shops kan dit leiden tot een licht verhoogde serverbelasting.',
+
+  'MODULE_' . $modulname . '_JSON_ENCODING_TITLE' => 'JSON-codering voor uitvoer',
+  'MODULE_' . $modulname . '_JSON_ENCODING_DESC'  => 'Bepaalt hoe strings v&oacute;&oacute;r <code>json_encode()</code> worden genormaliseerd. <code>auto</code> behoudt geldige UTF-8 en converteert anders ISO-8859-15 naar UTF-8.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Productreviews activeren?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'JSON-LD-markering voor reviews op de productdetailpagina activeren? Alleen in combinatie met productmarkering.',
@@ -119,11 +134,64 @@ $lang_array = array(
   'MODULE_' . $modulname . '_TELEPHONE_SALES_TITLE' => 'Verkoop telefoonnummer',
   'MODULE_' . $modulname . '_TELEPHONE_SALES_DESC'  => 'Telefoonnummer voor verkoop. Formaat: +49-2722-631363',
 
+
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_TITLE' => 'Service email address',
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_DESC'  => 'This email address is output as <code>email</code> for the customer service ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_TITLE' => 'Technical support email address',
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_DESC'  => 'This email address is output as <code>email</code> for the technical support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_BILLING_TITLE' => 'Billing email address',
+  'MODULE_' . $modulname . '_EMAIL_BILLING_DESC'  => 'This email address is output as <code>email</code> for the billing support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_SALES_TITLE' => 'Sales email address',
+  'MODULE_' . $modulname . '_EMAIL_SALES_DESC'  => 'This email address is output as <code>email</code> for the sales ContactPoint.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_TITLE' => 'ContactOption default contact',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_DESC'  => 'Optional Schema.org <code>contactOption</code> for the default contact. Possible values: empty, <code>TollFree</code> or <code>HearingImpairedSupported</code>.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_TITLE' => 'ContactOption customer service',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_DESC'  => 'Optional Schema.org <code>contactOption</code> for customer service.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_TITLE' => 'ContactOption technical support',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_DESC'  => 'Optional Schema.org <code>contactOption</code> for technical support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_TITLE' => 'ContactOption billing',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_DESC'  => 'Optional Schema.org <code>contactOption</code> for billing support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_TITLE' => 'ContactOption sales',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_DESC'  => 'Optional Schema.org <code>contactOption</code> for sales.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_TITLE' => 'Contact availability fallback / hoursAvailable',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_DESC'  => 'Optional fallback: one time range per line in the format <code>Mo-Fr 09:00-17:00</code>. Multiple days can be comma-separated, e.g. <code>Mo,We,Fr 10:00-14:00</code>. This value is only used when the respective ContactPoint has no specific availability configured.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_TITLE' => 'Availability default contact',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for the default contact. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_TITLE' => 'Availability customer service',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for customer service. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_TITLE' => 'Availability technical support',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for technical support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_TITLE' => 'Availability billing',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for billing support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_TITLE' => 'Availability sales',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for sales. Leave empty to use the fallback.',
+
   'MODULE_' . $modulname . '_FAX_TITLE' => 'Faxnummer',
   'MODULE_' . $modulname . '_FAX_DESC'  => 'Faxnummer van het bedrijf. Formaat: +49-2722-631400',
 
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_TITLE' => 'Social-media profielen',
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_DESC'  => 'Voer volledige URL’s in, gescheiden door komma’s.',
+
+  'MODULE_' . $modulname . '_FOUNDER_TITLE' => 'Oprichter',
+  'MODULE_' . $modulname . '_FOUNDER_DESC'  => 'Naam van de oprichter. Deze waarde wordt als <code>founder</code> in de Organization- en LocalBusiness-markup uitgegeven.',
+
+  'MODULE_' . $modulname . '_FOUNDING_DATE_TITLE' => 'Oprichtingsdatum',
+  'MODULE_' . $modulname . '_FOUNDING_DATE_DESC'  => 'Oprichtingsdatum in ISO-formaat <code>YYYY-MM-DD</code>, bijv. <code>2019-03-18</code>. Deze waarde wordt als <code>foundingDate</code> in de Organization- en LocalBusiness-markup uitgegeven.',
+
 
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_TITLE' => 'Straat / huisnummer',
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_DESC'  => 'Wordt gebruikt voor LocalBusiness-markering.',

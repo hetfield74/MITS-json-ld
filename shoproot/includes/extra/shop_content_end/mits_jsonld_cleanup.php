@@ -17,21 +17,39 @@ if (defined('MODULE_MITS_JSON_LD_STATUS')
   && function_exists('mits_jsonld_extract_and_strip_from_text')
   && function_exists('mits_jsonld_custom_enabled')
   && isset($smarty)
-  && isset($shop_content_data['content_text'])
-  && !empty($shop_content_data['content_text'])
   && mits_jsonld_custom_enabled()
 ) {
-    list($nodes, $cleanHtml) = mits_jsonld_extract_and_strip_from_text($shop_content_data['content_text']);
-
     if (!isset($GLOBALS['mits_jsonld_custom_nodes'])) {
         $GLOBALS['mits_jsonld_custom_nodes'] = [];
     }
 
-    if (!empty($nodes)) {
-        $GLOBALS['mits_jsonld_custom_nodes'] = array_merge($GLOBALS['mits_jsonld_custom_nodes'], $nodes);
+    $cleanHtml = null;
+
+    if (isset($content_body) && !empty($content_body) && is_string($content_body)) {
+        list($nodes, $cleanHtml) = mits_jsonld_extract_and_strip_from_text($content_body);
+
+        if (!empty($nodes)) {
+            $GLOBALS['mits_jsonld_custom_nodes'] = array_merge($GLOBALS['mits_jsonld_custom_nodes'], $nodes);
+        }
+
+        $content_body = $cleanHtml;
     }
 
-    $shop_content_data['content_text'] = $cleanHtml;
+    if (isset($shop_content_data['content_text']) && !empty($shop_content_data['content_text']) && is_string($shop_content_data['content_text'])) {
+        list($nodes, $cleanContentText) = mits_jsonld_extract_and_strip_from_text($shop_content_data['content_text']);
 
-    $smarty->assign('CONTENT_BODY', $cleanHtml);
+        if (!empty($nodes)) {
+            $GLOBALS['mits_jsonld_custom_nodes'] = array_merge($GLOBALS['mits_jsonld_custom_nodes'], $nodes);
+        }
+
+        $shop_content_data['content_text'] = $cleanContentText;
+
+        if ($cleanHtml === null) {
+            $cleanHtml = $cleanContentText;
+        }
+    }
+
+    if ($cleanHtml !== null) {
+        $smarty->assign('CONTENT_BODY', $cleanHtml);
+    }
 }

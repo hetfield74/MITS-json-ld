@@ -20,20 +20,32 @@ if (defined('MODULE_MITS_JSON_LD_STATUS')
   && isset($current_category_id)
   && $current_category_id != 0
   && isset($module_smarty)
-  && isset($category['categories_description'])
-  && !empty($category['categories_description'])
+  && isset($category)
+  && is_array($category)
   && mits_jsonld_custom_enabled()
 ) {
-    list($nodes, $cleanHtml) = mits_jsonld_extract_and_strip_from_text($category['categories_description']);
-
     if (!isset($GLOBALS['mits_jsonld_custom_nodes'])) {
         $GLOBALS['mits_jsonld_custom_nodes'] = [];
     }
 
-    if (!empty($nodes)) {
-        $GLOBALS['mits_jsonld_custom_nodes'] = array_merge($GLOBALS['mits_jsonld_custom_nodes'], $nodes);
-    }
+    $descriptionMap = [
+      'categories_short_description'   => 'CATEGORIES_SHORT_DESCRIPTION',
+      'categories_description'         => 'CATEGORIES_DESCRIPTION',
+      'categories_description_2'       => 'CATEGORIES_DESCRIPTION_2',
+    ];
 
-    $category['categories_description'] = $cleanHtml;
-    $module_smarty->assign('CATEGORIES_DESCRIPTION', $cleanHtml);
+    foreach ($descriptionMap as $field => $smartyKey) {
+        if (empty($category[$field]) || !is_string($category[$field])) {
+            continue;
+        }
+
+        list($nodes, $cleanHtml) = mits_jsonld_extract_and_strip_from_text($category[$field]);
+
+        if (!empty($nodes)) {
+            $GLOBALS['mits_jsonld_custom_nodes'] = array_merge($GLOBALS['mits_jsonld_custom_nodes'], $nodes);
+        }
+
+        $category[$field] = $cleanHtml;
+        $module_smarty->assign($smartyKey, $cleanHtml);
+    }
 }

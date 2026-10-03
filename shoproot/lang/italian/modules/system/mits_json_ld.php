@@ -24,10 +24,12 @@ $lang_array = array(
     <p>Il modulo supporta i seguenti tipi di markup:</p>
     <ul style="font-size: larger">
       <li>WebSite <small>name, alternateName, description, url e logo</small></li>
-      <li>Organization <small>name, alternateName, description, url, logo e ContactPoints per customer service, technical support, billing support, sales</small></li>
-      <li>LocalBusiness <small>name, image, url, telephone, address, geo, sameAs</small></li>
+      <li>Organization <small>name, alternateName, description, address, url, logo, founder, foundingDate e ContactPoints per customer service, technical support, billing support, sales</small></li>
+      <li>LocalBusiness <small>name, image, description, url, telephone, address, geo, sameAs, founder, foundingDate</small></li>
+      <li>WebPage <small>pagine del content manager</small></li>
       <li>ContactPage <small>name, url, description</small></li>
       <li>Breadcrumb</li>
+      <li>CollectionPage <small>Pagine categoria e risultati di ricerca con ItemList</small></li>
       <li>Product <small>name, image, description, brand, priceCurrency, priceValidUntil (fisso a 1 mese), price, url, itemCondition, availability, mpn, sku, gtin13 e reviews</small></li>
       <li>Review (Rating e aggregateRating) <small>ratingValue, worstRating, bestRating, author, datePublished, reviewBody</small></li>
       <li>Sitelink Searchbox</li>
@@ -50,6 +52,16 @@ $lang_array = array(
   'MODULE_' . $modulname . '_SHOW_PRODUCT_TITLE' => 'Attivare Prodotti?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_DESC'  => 'Attivare il markup JSON-LD per i prodotti nella pagina dei dettagli?',
 
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_TITLE' => 'Attivare le pagine categoria?',
+  'MODULE_' . $modulname . '_SHOW_CATEGORY_DESC'  => 'Genera il markup JSON-LD per le pagine categoria come <code>CollectionPage</code> con una <code>ItemList</code> dell&#39;elenco prodotti visibile? Vengono aggiunti solo gli URL dei prodotti, non markup Product completi.',
+
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Attivare le pagine dei risultati di ricerca?',
+  'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'Mostrare il markup JSON-LD per la pagina dei risultati di ricerca <code>advanced_search_result.php</code> come <code>CollectionPage</code> con una <code>ItemList</code> della lista prodotti visibile? La paginazione viene considerata; nella lista vengono emessi solo gli URL dei prodotti, non markup Product completi.',
+
+
+  'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Attivare le pagine contenuto?',
+  'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'Genera il markup JSON-LD per le pagine generali del content manager. Il tipo predefinito &egrave; <code>WebPage</code>; se la colonna opzionale <code>mits_jsonld_schema_type</code> esiste e contiene <code>Article</code>, viene usato <code>Article</code>. La pagina di contatto rimane <code>ContactPage</code>.',
+
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_TITLE' => 'Visualizzare gli attributi nel JSON-LD',
   'MODULE_' . $modulname . '_ENABLE_ATTRIBUTES_DESC'  => 'Gli attributi del prodotto devono essere visualizzati come offerte?',
 
@@ -64,6 +76,9 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_TITLE' => 'Rilevare e integrare automaticamente il JSON-LD personalizzato dai testi?',
   'MODULE_' . $modulname . '_ENABLE_CUSTOM_JSON_DESC'  => 'Se attivato, il modulo cerca i blocchi &lt;script type="application/ld+json"&gt;&mldr;&lt;/script&gt; incorporati nelle pagine di prodotto e di contenuto, li rimuove dal testo e li integra correttamente nel JSON-LD centrale del modulo.<br><br><strong>Nota:</strong> Questa funzione è necessaria solo se i dati strutturati sono incorporati nell\'editor. Con testi molto grandi o negozi ad alto traffico, può causare un leggero aumento del carico del server.',
+
+  'MODULE_' . $modulname . '_JSON_ENCODING_TITLE' => 'Codifica JSON per l&#039;output',
+  'MODULE_' . $modulname . '_JSON_ENCODING_DESC'  => 'Definisce come normalizzare le stringhe prima di <code>json_encode()</code>. <code>auto</code> mantiene UTF-8 valido e altrimenti converte ISO-8859-15 in UTF-8.',
 
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_TITLE' => 'Attivare le recensioni dei prodotti?',
   'MODULE_' . $modulname . '_SHOW_PRODUCT_REVIEWS_DESC'  => 'Attivare il markup JSON-LD per le recensioni nella pagina prodotto? Solo insieme al markup del prodotto.',
@@ -119,11 +134,64 @@ $lang_array = array(
   'MODULE_' . $modulname . '_TELEPHONE_SALES_TITLE' => 'Numero reparto vendite',
   'MODULE_' . $modulname . '_TELEPHONE_SALES_DESC'  => 'Numero per il reparto vendite. Formato richiesto: +49-2722-631363',
 
+
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_TITLE' => 'Service email address',
+  'MODULE_' . $modulname . '_EMAIL_SERVICE_DESC'  => 'This email address is output as <code>email</code> for the customer service ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_TITLE' => 'Technical support email address',
+  'MODULE_' . $modulname . '_EMAIL_TECHNICAL_DESC'  => 'This email address is output as <code>email</code> for the technical support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_BILLING_TITLE' => 'Billing email address',
+  'MODULE_' . $modulname . '_EMAIL_BILLING_DESC'  => 'This email address is output as <code>email</code> for the billing support ContactPoint.',
+
+  'MODULE_' . $modulname . '_EMAIL_SALES_TITLE' => 'Sales email address',
+  'MODULE_' . $modulname . '_EMAIL_SALES_DESC'  => 'This email address is output as <code>email</code> for the sales ContactPoint.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_TITLE' => 'ContactOption default contact',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_DEFAULT_DESC'  => 'Optional Schema.org <code>contactOption</code> for the default contact. Possible values: empty, <code>TollFree</code> or <code>HearingImpairedSupported</code>.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_TITLE' => 'ContactOption customer service',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SERVICE_DESC'  => 'Optional Schema.org <code>contactOption</code> for customer service.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_TITLE' => 'ContactOption technical support',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_TECHNICAL_DESC'  => 'Optional Schema.org <code>contactOption</code> for technical support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_TITLE' => 'ContactOption billing',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_BILLING_DESC'  => 'Optional Schema.org <code>contactOption</code> for billing support.',
+
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_TITLE' => 'ContactOption sales',
+  'MODULE_' . $modulname . '_CONTACT_OPTION_SALES_DESC'  => 'Optional Schema.org <code>contactOption</code> for sales.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_TITLE' => 'Contact availability fallback / hoursAvailable',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_AVAILABLE_DESC'  => 'Optional fallback: one time range per line in the format <code>Mo-Fr 09:00-17:00</code>. Multiple days can be comma-separated, e.g. <code>Mo,We,Fr 10:00-14:00</code>. This value is only used when the respective ContactPoint has no specific availability configured.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_TITLE' => 'Availability default contact',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_DEFAULT_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for the default contact. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_TITLE' => 'Availability customer service',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SERVICE_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for customer service. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_TITLE' => 'Availability technical support',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_TECHNICAL_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for technical support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_TITLE' => 'Availability billing',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_BILLING_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for billing support. Leave empty to use the fallback.',
+
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_TITLE' => 'Availability sales',
+  'MODULE_' . $modulname . '_CONTACT_HOURS_SALES_DESC'  => 'Optional: specific <code>hoursAvailable</code> entries for sales. Leave empty to use the fallback.',
+
   'MODULE_' . $modulname . '_FAX_TITLE' => 'Numero fax',
   'MODULE_' . $modulname . '_FAX_DESC'  => 'Numero fax dell’azienda. Formato richiesto: +49-2722-631400',
 
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_TITLE' => 'Profili social media',
   'MODULE_' . $modulname . '_SOCIAL_MEDIA_DESC'  => 'Inserisci gli URL completi dei tuoi profili social. Separare più indirizzi con una virgola.',
+
+  'MODULE_' . $modulname . '_FOUNDER_TITLE' => 'Fondatore',
+  'MODULE_' . $modulname . '_FOUNDER_DESC'  => 'Nome del fondatore. Questo valore viene emesso come <code>founder</code> nel markup Organization e LocalBusiness.',
+
+  'MODULE_' . $modulname . '_FOUNDING_DATE_TITLE' => 'Data di fondazione',
+  'MODULE_' . $modulname . '_FOUNDING_DATE_DESC'  => 'Data di fondazione nel formato ISO <code>YYYY-MM-DD</code>, ad es. <code>2019-03-18</code>. Questo valore viene emesso come <code>foundingDate</code> nel markup Organization e LocalBusiness.',
+
 
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_TITLE' => 'Via / numero civico',
   'MODULE_' . $modulname . '_LOCATION_STREETADDRESS_DESC'  => 'Via e numero per il markup LocalBusiness.',
