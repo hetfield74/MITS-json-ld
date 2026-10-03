@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">Il modulo può essere ampliato e adattato secondo le tue esigenze. Per personalizzazioni individuali, contattaci direttamente.<br />
-    <div style="text-align:center;">
-      <small>La versione più recente del modulo è sempre disponibile su Github!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD su Github</a>
-    </div>
     <p>Per domande, problemi o richieste riguardanti questo modulo o altri aspetti relativi a modified eCommerce Shopsoftware, non esitare a contattarci:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Pagina di contatto su MerZ-IT-SerVice.de</a></div>  
 ',
@@ -57,7 +53,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Attivare le pagine dei risultati di ricerca?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'Mostrare il markup JSON-LD per la pagina dei risultati di ricerca <code>advanced_search_result.php</code> come <code>CollectionPage</code> con una <code>ItemList</code> della lista prodotti visibile? La paginazione viene considerata; nella lista vengono emessi solo gli URL dei prodotti, non markup Product completi.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Attivare le pagine contenuto?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'Genera il markup JSON-LD per le pagine generali del content manager. Il tipo predefinito &egrave; <code>WebPage</code>; se la colonna opzionale <code>mits_jsonld_schema_type</code> esiste e contiene <code>Article</code>, viene usato <code>Article</code>. La pagina di contatto rimane <code>ContactPage</code>.',

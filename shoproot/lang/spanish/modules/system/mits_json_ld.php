@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">Este módulo puede ampliarse o adaptarse según tus necesidades. Para personalizaciones individuales, contáctanos directamente.<br />
-    <div style="text-align:center;">
-      <small>¡La versión más actual del módulo siempre está disponible en Github!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD en Github</a>
-    </div>
     <p>Si tienes preguntas, problemas o deseas soporte adicional sobre modified eCommerce Shopsoftware, solo contáctanos:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Página de contacto en MerZ-IT-SerVice.de</a></div>  
 ',
@@ -57,7 +53,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => '&iquest;Activar las p&aacute;ginas de resultados de b&uacute;squeda?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => '&iquest;Mostrar el marcado JSON-LD para la p&aacute;gina de resultados de b&uacute;squeda <code>advanced_search_result.php</code> como <code>CollectionPage</code> con una <code>ItemList</code> de la lista de productos visible? Se tiene en cuenta la paginaci&oacute;n; solo se muestran las URL de productos en la lista, no marcados Product completos.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => '&iquest;Activar p&aacute;ginas de contenido?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'Genera marcado JSON-LD para p&aacute;ginas generales del gestor de contenido. El tipo predeterminado es <code>WebPage</code>; si existe la columna opcional <code>mits_jsonld_schema_type</code> y contiene <code>Article</code>, se usa <code>Article</code>. La p&aacute;gina de contacto sigue siendo <code>ContactPage</code>.',

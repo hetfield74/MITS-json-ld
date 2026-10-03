@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">This module can, of course, be expanded and adapted as required. For individual customization requests, please contact us directly.<br />
-    <div style="text-align:center;">
-      <small>The latest version of the module is always available on Github!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD on Github</a>
-    </div>
     <p>If you have questions, problems or requests for this module or any other concerns regarding modified eCommerce shopsoftware, simply contact us:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Contact page on MerZ-IT-SerVice.de</strong></a></div>  
 ',
@@ -56,7 +52,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Enable search result pages?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'Output JSON-LD markup for the search result page <code>advanced_search_result.php</code> as a <code>CollectionPage</code> with an <code>ItemList</code> of the visible product list? Pagination is considered; only product URLs are output in the list, not complete Product markup.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Enable content pages?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'Output JSON-LD markup for general content manager pages. The default type is <code>WebPage</code>; if the optional content column <code>mits_jsonld_schema_type</code> exists and contains <code>Article</code>, <code>Article</code> is used. The contact page remains <code>ContactPage</code>.',

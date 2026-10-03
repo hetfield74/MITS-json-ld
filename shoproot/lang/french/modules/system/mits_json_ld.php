@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">Ce module peut bien sûr être étendu et adapté selon vos besoins. Pour toute demande de personnalisation, veuillez nous contacter directement.<br />
-    <div style="text-align:center;">
-      <small>La version la plus récente du module est toujours disponible sur Github !</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD sur Github</a>
-    </div>
     <p>Pour toute question, problème ou demande concernant ce module ou tout autre sujet lié à modified eCommerce Shopsoftware, n’hésitez pas à nous contacter :</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Page de contact MerZ-IT-SerVice.de</a></div>  
 ',
@@ -56,7 +52,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Activer les pages de r&eacute;sultats de recherche ?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'Afficher le balisage JSON-LD pour la page de r&eacute;sultats de recherche <code>advanced_search_result.php</code> comme <code>CollectionPage</code> avec une <code>ItemList</code> de la liste de produits visible ? La pagination est prise en compte ; seules les URL des produits sont sorties dans la liste, pas de balisage Product complet.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Activer les pages de contenu ?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'G&eacute;n&eacute;rer le balisage JSON-LD des pages g&eacute;n&eacute;rales du gestionnaire de contenu. Le type par d&eacute;faut est <code>WebPage</code>; si la colonne optionnelle <code>mits_jsonld_schema_type</code> existe et contient <code>Article</code>, <code>Article</code> est utilis&eacute;. La page de contact reste <code>ContactPage</code>.',

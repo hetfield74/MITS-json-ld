@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">Uitbreidingen of aanpassingen zijn uiteraard mogelijk. Voor individuele wensen kunt u direct contact met ons opnemen.<br />
-    <div style="text-align:center;">
-      <small>Op Github vindt u altijd de meest recente versie van de module!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD op Github</a>
-    </div>
     <p>Bij vragen, problemen of verzoeken omtrent deze module of andere zaken rond modified eCommerce Shopsoftware, neem gerust contact met ons op:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Contactpagina op MerZ-IT-SerVice.de</a></div>  
 ',
@@ -57,7 +53,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Zoekresultaatpagina&#39;s activeren?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'JSON-LD markup voor de zoekresultaatpagina <code>advanced_search_result.php</code> als <code>CollectionPage</code> met <code>ItemList</code> van de zichtbare productlijst uitvoeren? Paginering wordt meegenomen; er worden alleen product-URL&#39;s in de lijst uitgevoerd, geen volledige Product-markups.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Contentpagina&#39;s activeren?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'JSON-LD-markering voor algemene contentmanagerpagina&#39;s uitvoeren. Standaard is <code>WebPage</code>; als de optionele contentkolom <code>mits_jsonld_schema_type</code> bestaat en <code>Article</code> bevat, wordt <code>Article</code> gebruikt. De contactpagina blijft <code>ContactPage</code>.',

@@ -35,10 +35,6 @@ $lang_array = array(
       <li>Sitelink Searchbox</li>
     </ul>
     <p style="font-size: larger">Das Modul kann auf Wunsch nat&uuml;rlich noch erweitert und angepasst werden. F&uuml;r Ihre individuellen Anpassungsw&uuml;sche wenden Sie sich einfach direkt an uns.<br />
-    <div style="text-align:center;">
-      <small>Nur auf Github gibt es immer die aktuellste Version des Moduls!</small><br />
-      <a style="background:#6a9;color:#444" target="_blank" href="https://github.com/hetfield74/MITS-json-ld" class="button" onclick="this.blur();">MITS JSON-LD on Github</a>
-    </div>
     <p>Bei Fragen, Problemen oder W&uuml;nschen zu diesem Modul oder auch zu anderen Anliegen rund um die modified eCommerce Shopsoftware nehmen Sie einfach Kontakt zu uns auf:</p> 
     <div style="text-align:center;"><a style="background:#6a9;color:#444" target="_blank" href="https://www.merz-it-service.de/Kontakt.html" class="button" onclick="this.blur();">Kontaktseite auf MerZ-IT-SerVice.de</strong></a></div>  
 ',
@@ -56,7 +52,6 @@ $lang_array = array(
 
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_TITLE' => 'Suchergebnisseiten aktivieren?',
   'MODULE_' . $modulname . '_SHOW_SEARCH_RESULTS_DESC'  => 'JSON-LD Markup f&uuml;r die Suchergebnisseite <code>advanced_search_result.php</code> als <code>CollectionPage</code> mit <code>ItemList</code> der sichtbaren Produktliste ausgeben? Pagination wird ber&uuml;cksichtigt; es werden nur Produkt-URLs in der Liste ausgegeben, keine vollst&auml;ndigen Product-Markups.',
-
 
   'MODULE_' . $modulname . '_SHOW_CONTENT_TITLE' => 'Content-Seiten aktivieren?',
   'MODULE_' . $modulname . '_SHOW_CONTENT_DESC'  => 'JSON-LD Markup f&uuml;r allgemeine Content-Manager-Seiten ausgeben. Standard ist <code>WebPage</code>; wenn die optionale Content-Spalte <code>mits_jsonld_schema_type</code> existiert und den Wert <code>Article</code> enth&auml;lt, wird <code>Article</code> ausgegeben. Die Kontaktseite bleibt weiterhin <code>ContactPage</code>.',
